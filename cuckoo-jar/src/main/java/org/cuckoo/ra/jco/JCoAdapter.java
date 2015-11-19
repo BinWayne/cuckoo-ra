@@ -18,6 +18,18 @@
  */
 package org.cuckoo.ra.jco;
 
+import java.util.HashMap;
+import java.util.logging.Logger;
+
+import javax.resource.ResourceException;
+import javax.resource.cci.MappedRecord;
+import javax.resource.cci.Record;
+import javax.resource.spi.LocalTransactionException;
+
+import org.cuckoo.ra.cci.ApplicationProperties;
+import org.cuckoo.ra.cci.CuckooMappedRecord;
+import org.cuckoo.ra.common.CuckooConnectionMetaData;
+
 import com.sap.conn.jco.JCoAttributes;
 import com.sap.conn.jco.JCoContext;
 import com.sap.conn.jco.JCoCustomDestination;
@@ -27,286 +39,223 @@ import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoStructure;
-import org.cuckoo.ra.cci.ApplicationProperties;
-import org.cuckoo.ra.cci.CuckooMappedRecord;
-import org.cuckoo.ra.common.CuckooConnectionMetaData;
 
-import javax.resource.ResourceException;
-import javax.resource.cci.MappedRecord;
-import javax.resource.cci.Record;
-import javax.resource.spi.LocalTransactionException;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+public class JCoAdapter {
+	private static final Logger LOG = Logger.getLogger(JCoAdapter.class.getName());
 
-public class JCoAdapter
-{
-    private static final Logger LOG = Logger.getLogger( JCoAdapter.class.getName() );
+	private static final String OUTPUT_RECORD_NAME = "EXPORT";
 
-    private static final String OUTPUT_RECORD_NAME = "EXPORT";
+	/**
+	 * @see com.sap.conn.jco.JCoAttributes#getPartnerType()
+	 */
+	private static final HashMap<Character, String> PARTNER_TYPE_TO_PRODUCT_NAME_MAPPING = new HashMap<Character, String>() {
+		{
+			put('2', "SAP R/2");
+			put('3', "SAP R/3");
+			put('E', "External Program");
+			put('R', "Registered external program");
+			put('F', "Shared memory pipe");
+		}
+	};
 
-    /**
-     * @see com.sap.conn.jco.JCoAttributes#getPartnerType()
-     */
-    private static final HashMap<Character, String> PARTNER_TYPE_TO_PRODUCT_NAME_MAPPING = new HashMap<Character, String>()
-    {
-        {
-            put( '2', "SAP R/2" );
-            put( '3', "SAP R/3" );
-            put( 'E', "External Program" );
-            put( 'R', "Registered external program" );
-            put( 'F', "Shared memory pipe" );
-        }
-    };
+	private final JCoDestination destination;
 
-    private final JCoDestination destination;
+	private final JCoRecordMapper mapper = new JCoRecordMapper();
 
-    private final JCoRecordMapper mapper = new JCoRecordMapper();
+	public JCoAdapter(String destinationName, ApplicationProperties applicationProperties) throws ResourceException {
+		LOG.entering("JCoAdapter", "JCoAdapter( " + destinationName + " )");
 
-    public JCoAdapter( String destinationName, ApplicationProperties applicationProperties ) throws ResourceException
-    {
-        LOG.entering( "JCoAdapter", "JCoAdapter( " + destinationName + " )" );
+		if (applicationProperties == null) {
+			// use the logon properties as configured for the resource adapter
+			// or overwritten by
+			// the managed connection factory
+			destination = getDestination(destinationName);
+		} else {
+			// use the application provided logon properties and/or the
+			// credentials
+			// from container-managed security setup.
+			destination = getDestination(destinationName).createCustomDestination();
+			setCustomLogonData(((JCoCustomDestination) destination).getUserLogonData(), applicationProperties);
+		}
+		// Can't do this without a JCoSession created, commented out for now
+		// try
+		// {
+		// destination.ping();
+		// }
+		// catch ( JCoException e )
+		// {
+		// if ( e.getGroup() == JCoException.JCO_ERROR_LOGON_FAILURE )
+		// {
+		// throw new javax.resource.spi.SecurityException( "Failed logging on to
+		// SAP", e );
+		// }
+		// throw new ResourceException( "Error getting Destination", e );
+		// }
+	}
 
-        if ( applicationProperties == null )
-        {
-            // use the logon properties as configured for the resource adapter or overwritten by
-            // the managed connection factory
-            destination = getDestination( destinationName );
-        }
-        else
-        {
-            // use the application provided logon properties and/or the credentials
-            // from container-managed security setup.
-            destination = getDestination( destinationName ).createCustomDestination();
-            setCustomLogonData( ( ( JCoCustomDestination ) destination ).getUserLogonData(), applicationProperties );
-        }
-        try
-        {
-            destination.ping();
-        }
-        catch ( JCoException e )
-        {
-            if ( e.getGroup() == JCoException.JCO_ERROR_LOGON_FAILURE )
-            {
-                throw new javax.resource.spi.SecurityException( "Failed logging on to SAP", e );
-            }
-            throw new ResourceException( "Error getting Destination", e );
-        }
-    }
+	private JCoDestination getDestination(String destinationName) throws ResourceException {
+		LOG.entering("JCoAdapter", "getDestination( " + destinationName + " )");
+		try {
+			return JCoDestinationManager.getDestination(destinationName);
+		} catch (JCoException e) {
+			throw new ResourceException("Error getting Destination", e);
+		}
+	}
 
-    private JCoDestination getDestination( String destinationName ) throws ResourceException
-    {
-        LOG.entering( "JCoAdapter", "getDestination( " + destinationName + " )" );
-        try
-        {
-            return JCoDestinationManager.getDestination( destinationName );
-        }
-        catch ( JCoException e )
-        {
-            throw new ResourceException( "Error getting Destination", e );
-        }
-    }
+	public void disconnect() throws ResourceException {
+		LOG.entering("JCoAdapter", "disconnect()");
 
-    public void disconnect() throws ResourceException
-    {
-        LOG.entering( "JCoAdapter", "disconnect()" );
+		// TODO: do we need this?
+		if (JCoContext.isStateful(destination)) {
+			LOG.warning("JCo destination is still stateful. Ending stateful destination now...");
+			try {
+				JCoContext.end(destination);
+			} catch (JCoException e) {
+				throw new ResourceException("Error ending stateful JCo session");
+			}
+		}
+	}
 
-        // TODO: do we need this?
-        if ( JCoContext.isStateful( destination ) )
-        {
-            LOG.warning( "JCo destination is still stateful. Ending stateful destination now..." );
-            try
-            {
-                JCoContext.end( destination );
-            }
-            catch ( JCoException e )
-            {
-                throw new ResourceException( "Error ending stateful JCo session" );
-            }
-        }
-    }
+	public MappedRecord executeFunction(String functionName, Record inputRecord) throws ResourceException {
+		LOG.info("JCoAdapter.executeFunction( " + functionName + ", " + inputRecord + " )");
 
-    public MappedRecord executeFunction( String functionName, Record inputRecord ) throws ResourceException
-    {
-        LOG.info( "JCoAdapter.executeFunction( " + functionName + ", " + inputRecord + " )" );
+		try {
+			LOG.finest("Getting JCo repository for destination: " + destination);
+			final JCoFunction function = destination.getRepository().getFunction(functionName);
 
-        try
-        {
-            LOG.finest( "Getting JCo repository for destination: " + destination );
-            final JCoFunction function = destination.getRepository().getFunction( functionName );
+			final JCoParameterList importTableList = function.getTableParameterList();
+			final JCoParameterList importList = function.getImportParameterList();
+			mapper.populateImportRecord(importList, importTableList, (MappedRecord) inputRecord);
 
-            final JCoParameterList importTableList = function.getTableParameterList();
-            final JCoParameterList importList = function.getImportParameterList();
-            mapper.populateImportRecord( importList, importTableList, ( MappedRecord ) inputRecord );
+			LOG.finest("function before execute: " + function);
 
-            LOG.finest( "function before execute: " + function );
+			function.execute(destination);
 
-            function.execute( destination );
+			LOG.finest("function after execute: " + function);
 
-            LOG.finest( "function after execute: " + function );
+			mapper.checkForAbapExceptions(function);
+			final CuckooMappedRecord outputRecord = new CuckooMappedRecord(OUTPUT_RECORD_NAME);
+			mapper.convertExportParameters(function, outputRecord);
+			mapper.convertExportTable(function, outputRecord);
 
-            mapper.checkForAbapExceptions( function );
-            final CuckooMappedRecord outputRecord = new CuckooMappedRecord( OUTPUT_RECORD_NAME );
-            mapper.convertExportParameters( function, outputRecord );
-            mapper.convertExportTable( function, outputRecord );
+			return outputRecord;
+		} catch (JCoException e) {
+			throw new ResourceException("Error executing JCo function", e);
+		}
+	}
 
-            return outputRecord;
-        }
-        catch ( JCoException e )
-        {
-            throw new ResourceException( "Error executing JCo function", e );
-        }
-    }
+	public CuckooConnectionMetaData createConnectionMetaData() throws ResourceException {
+		LOG.entering("JCoAdapter", "createConnectionMetaData()");
 
-    public CuckooConnectionMetaData createConnectionMetaData() throws ResourceException
-    {
-        LOG.entering( "JCoAdapter", "createConnectionMetaData()" );
+		try {
+			final JCoAttributes attributes = destination.getAttributes();
+			String productName = determineProductName(attributes.getPartnerType());
+			String eisProductVersion = "" + attributes.getPartnerReleaseNumber();
+			int maxConnections = destination.getPoolCapacity();
+			String userName = attributes.getUser();
+			return new CuckooConnectionMetaData(productName, eisProductVersion, maxConnections, userName);
+		} catch (JCoException e) {
+			throw new ResourceException("Error getting connection meta data", e);
+		}
+	}
 
-        try
-        {
-            final JCoAttributes attributes = destination.getAttributes();
-            String productName = determineProductName( attributes.getPartnerType() );
-            String eisProductVersion = "" + attributes.getPartnerReleaseNumber();
-            int maxConnections = destination.getPoolCapacity();
-            String userName = attributes.getUser();
-            return new CuckooConnectionMetaData( productName, eisProductVersion, maxConnections, userName );
-        }
-        catch ( JCoException e )
-        {
-            throw new ResourceException( "Error getting connection meta data", e );
-        }
-    }
+	private void setCustomLogonData(JCoCustomDestination.UserData logonData,
+			ApplicationProperties applicationProperties) {
+		String aliasUser = applicationProperties.getAliasUser();
+		if (aliasUser != null) {
+			logonData.setAliasUser(aliasUser);
+		}
+		String client = applicationProperties.getClient();
+		if (client != null) {
+			logonData.setClient(client);
+		}
+		String language = applicationProperties.getLanguage();
+		if (language != null) {
+			logonData.setLanguage(language);
+		}
+		String password = applicationProperties.getPassword();
+		if (password != null) {
+			logonData.setPassword(password);
+		}
+		String ssoTicket = applicationProperties.getSsoTicket();
+		if (ssoTicket != null) {
+			logonData.setSSOTicket(ssoTicket);
+		}
+		String user = applicationProperties.getUser();
+		if (user != null) {
+			logonData.setUser(user);
+		}
+		String x509Certificate = applicationProperties.getX509Certificate();
+		if (x509Certificate != null) {
+			logonData.setX509Certificate(x509Certificate);
+		}
+	}
 
+	private String determineProductName(char partnerType) {
+		String productName = PARTNER_TYPE_TO_PRODUCT_NAME_MAPPING.get(partnerType);
+		if (productName == null) {
+			productName = "Unknown (" + partnerType + ")";
+		}
+		return productName;
+	}
 
-    private void setCustomLogonData( JCoCustomDestination.UserData logonData,
-                                     ApplicationProperties applicationProperties )
-    {
-        String aliasUser = applicationProperties.getAliasUser();
-        if ( aliasUser != null )
-        {
-            logonData.setAliasUser( aliasUser );
-        }
-        String client = applicationProperties.getClient();
-        if ( client != null )
-        {
-            logonData.setClient( client );
-        }
-        String language = applicationProperties.getLanguage();
-        if ( language != null )
-        {
-            logonData.setLanguage( language );
-        }
-        String password = applicationProperties.getPassword();
-        if ( password != null )
-        {
-            logonData.setPassword( password );
-        }
-        String ssoTicket = applicationProperties.getSsoTicket();
-        if ( ssoTicket != null )
-        {
-            logonData.setSSOTicket( ssoTicket );
-        }
-        String user = applicationProperties.getUser();
-        if ( user != null )
-        {
-            logonData.setUser( user );
-        }
-        String x509Certificate = applicationProperties.getX509Certificate();
-        if ( x509Certificate != null )
-        {
-            logonData.setX509Certificate( x509Certificate );
-        }
-    }
+	public void startTransaction() {
+		LOG.finer("Starting stateful SAP session for destination " + destination.getDestinationName());
 
-    private String determineProductName( char partnerType )
-    {
-        String productName = PARTNER_TYPE_TO_PRODUCT_NAME_MAPPING.get( partnerType );
-        if ( productName == null )
-        {
-            productName = "Unknown (" + partnerType + ")";
-        }
-        return productName;
-    }
+		JCoContext.begin(destination);
+	}
 
-    public void startTransaction()
-    {
-        LOG.finer( "Starting stateful SAP session for destination " + destination.getDestinationName() );
+	public void commitTransaction() throws LocalTransactionException {
+		LOG.finer("Committing transaction in SAP on destination " + destination.getDestinationName());
+		try {
+			JCoFunction commitFunction = destination.getRepository().getFunction("BAPI_TRANSACTION_COMMIT");
+			commitFunction.getImportParameterList().setValue("WAIT", "X");
+			commitFunction.execute(destination);
+			assertNoErrorOccurredDuringCommit(commitFunction);
+		} catch (JCoException e) {
+			throw new LocalTransactionException("Error committing transaction in SAP", e);
+		} finally {
+			endStatefulSession();
+		}
+	}
 
-        JCoContext.begin( destination );
-    }
+	private void assertNoErrorOccurredDuringCommit(JCoFunction commitFunction) throws LocalTransactionException {
+		final JCoStructure returnStructure = commitFunction.getExportParameterList().getStructure("RETURN");
+		String returnType = returnStructure.getString("TYPE");
+		if ("E".equals(returnType) || "A".equals(returnType)) {
+			String returnMessage = returnStructure.getString("MESSAGE");
+			throw new LocalTransactionException("Error committing transaction in SAP. Return type: " + returnType
+					+ ", return message: " + returnMessage);
+		}
+	}
 
-    public void commitTransaction() throws LocalTransactionException
-    {
-        LOG.finer( "Committing transaction in SAP on destination " + destination.getDestinationName() );
-        try
-        {
-            JCoFunction commitFunction = destination.getRepository().getFunction( "BAPI_TRANSACTION_COMMIT" );
-            commitFunction.getImportParameterList().setValue( "WAIT", "X" );
-            commitFunction.execute( destination );
-            assertNoErrorOccurredDuringCommit( commitFunction );
-        }
-        catch ( JCoException e )
-        {
-            throw new LocalTransactionException( "Error committing transaction in SAP", e );
-        }
-        finally
-        {
-            endStatefulSession();
-        }
-    }
+	public void rollbackTransaction() throws LocalTransactionException {
+		LOG.finer("Rolling back transaction in SAP on destination " + destination.getDestinationName());
+		try {
+			JCoFunction rollbackFunction = destination.getRepository().getFunction("BAPI_TRANSACTION_ROLLBACK");
+			rollbackFunction.execute(destination);
+			// No need to check the RETURN values here. From SAP documentation:
+			// "No messages are returned, if an error occurs. If the ROLLBACK
+			// WORK command is not successfully executed,
+			// the system crashes." :-)
+		} catch (JCoException e) {
+			throw new LocalTransactionException("Error committing transaction in SAP", e);
+		} finally {
+			endStatefulSession();
+		}
+	}
 
-    private void assertNoErrorOccurredDuringCommit( JCoFunction commitFunction )
-            throws LocalTransactionException
-    {
-        final JCoStructure returnStructure = commitFunction.getExportParameterList().getStructure( "RETURN" );
-        String returnType = returnStructure.getString( "TYPE" );
-        if ( "E".equals( returnType ) || "A".equals( returnType ) )
-        {
-            String returnMessage = returnStructure.getString( "MESSAGE" );
-            throw new LocalTransactionException(
-                    "Error committing transaction in SAP. Return type: " + returnType + ", return message: " +
-                            returnMessage );
-        }
-    }
+	private void endStatefulSession() throws LocalTransactionException {
+		LOG.info("Ending stateful SAP session for destination " + destination.getDestinationName());
 
-    public void rollbackTransaction() throws LocalTransactionException
-    {
-        LOG.finer( "Rolling back transaction in SAP on destination " + destination.getDestinationName() );
-        try
-        {
-            JCoFunction rollbackFunction = destination.getRepository().getFunction( "BAPI_TRANSACTION_ROLLBACK" );
-            rollbackFunction.execute( destination );
-            // No need to check the RETURN values here. From SAP documentation:
-            // "No messages are returned, if an error occurs. If the ROLLBACK WORK command is not successfully executed, 
-            // the system crashes." :-)
-        }
-        catch ( JCoException e )
-        {
-            throw new LocalTransactionException( "Error committing transaction in SAP", e );
-        }
-        finally
-        {
-            endStatefulSession();
-        }
-    }
+		if (!JCoContext.isStateful(destination)) {
+			throw new LocalTransactionException("Current JCo session is not stateful");
+		}
 
-    private void endStatefulSession()
-            throws LocalTransactionException
-    {
-        LOG.info( "Ending stateful SAP session for destination " + destination.getDestinationName() );
-
-        if ( !JCoContext.isStateful( destination ) )
-        {
-            throw new LocalTransactionException( "Current JCo session is not stateful" );
-        }
-
-        try
-        {
-            JCoContext.end( destination );
-        }
-        catch ( JCoException e )
-        {
-            throw new LocalTransactionException( "Error ending stateful JCo session after commit/rollback", e );
-        }
-    }
+		try {
+			JCoContext.end(destination);
+		} catch (JCoException e) {
+			throw new LocalTransactionException("Error ending stateful JCo session after commit/rollback", e);
+		}
+	}
 }

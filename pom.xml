@@ -195,4 +195,18 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <repositories>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <url>http://repository.jboss.org/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>pg_hr</id>
+            <url>http://kpd.na.pg.com:8081/nexus/content/repositories/pg_hr/</url>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <url>http://kpd.na.pg.com:8081/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
 </project>
