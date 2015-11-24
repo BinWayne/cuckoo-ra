@@ -18,7 +18,6 @@
  */
 package org.cuckoo.ra.jco;
 
-import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoMetaData;
 import com.sap.conn.jco.JCoParameterList;
@@ -28,17 +27,12 @@ import com.sap.conn.jco.JCoTable;
 import org.cuckoo.ra.cci.CuckooIndexedRecord;
 import org.cuckoo.ra.cci.CuckooMappedRecord;
 
-import javax.resource.ResourceException;
 import javax.resource.cci.IndexedRecord;
 import javax.resource.cci.MappedRecord;
 import javax.resource.cci.Record;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class JCoRecordMapper {
-
-    private static final Logger LOG = Logger.getLogger( JCoRecordMapper.class.getName() );
 
     public void populateImportRecord( final JCoParameterList importList,
                                       final JCoParameterList tableList, final MappedRecord mapRecord ) {
