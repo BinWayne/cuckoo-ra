@@ -171,19 +171,4 @@ public class JCoRecordMapper {
             populateMappedRecord( resultRecord, exportList );
         }
     }
-
-    public void checkForAbapExceptions( final JCoFunction function ) throws ResourceException {
-        // TODO collect information from ABAP exceptions more intelligently
-        final AbapException[] exceptions = function.getExceptionList();
-
-        if ( exceptions != null && exceptions.length > 0 ) {
-            final String message = "Error executing " + function.getName();
-
-            for ( final AbapException exc : exceptions ) {
-                LOG.log( Level.SEVERE, message, exc );
-            }
-
-            throw new ResourceException( message, exceptions[0] );
-        }
-    }
 }
