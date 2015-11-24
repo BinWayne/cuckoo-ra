@@ -12,11 +12,7 @@ public class CuckooJCoSessionReferenceProvider implements SessionReferenceProvid
 		if (sessionRef != null) {
 			return sessionRef;
 		}
-<<<<<<< HEAD
-		throw new RuntimeException("Unknown thread: " + Thread.currentThread().getId());
-=======
 		throw new RuntimeException("Unknown JCo session reference");
->>>>>>> b9353166401809cd13b45d66829524bc8ed04262
 	}
 
 	public boolean isSessionAlive(String sessionId) {
