@@ -77,20 +77,15 @@ public class JCoAdapter {
 			destination = getDestination(destinationName).createCustomDestination();
 			setCustomLogonData(((JCoCustomDestination) destination).getUserLogonData(), applicationProperties);
 		}
-		// Can't do this without a JCoSession created, commented out for now
-		// try
-		// {
-		// destination.ping();
-		// }
-		// catch ( JCoException e )
-		// {
-		// if ( e.getGroup() == JCoException.JCO_ERROR_LOGON_FAILURE )
-		// {
-		// throw new javax.resource.spi.SecurityException( "Failed logging on to
-		// SAP", e );
-		// }
-		// throw new ResourceException( "Error getting Destination", e );
-		// }
+
+		try {
+			destination.ping();
+		} catch (JCoException e) {
+			if (e.getGroup() == JCoException.JCO_ERROR_LOGON_FAILURE) {
+				throw new javax.resource.spi.SecurityException("Failed logging on to SAP", e);
+			}
+			throw new ResourceException("Error getting Destination", e);
+		}
 	}
 
 	private JCoDestination getDestination(String destinationName) throws ResourceException {

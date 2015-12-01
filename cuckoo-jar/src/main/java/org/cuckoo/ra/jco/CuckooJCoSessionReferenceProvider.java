@@ -11,7 +11,7 @@ public class CuckooJCoSessionReferenceProvider implements SessionReferenceProvid
 		if (sessionRef != null) {
 			return sessionRef;
 		}
-		throw new RuntimeException("Unknown JCo session reference");
+		return new CuckooJCoSessionReference();
 	}
 
 	public boolean isSessionAlive(String sessionId) {
