@@ -1,14 +1,13 @@
 package org.cuckoo.ra.jco;
 
-import org.cuckoo.ra.spi.CuckooManagedConnectionImpl;
-
 import com.sap.conn.jco.ext.JCoSessionReference;
 import com.sap.conn.jco.ext.SessionException;
 import com.sap.conn.jco.ext.SessionReferenceProvider;
 
 public class CuckooJCoSessionReferenceProvider implements SessionReferenceProvider {
+
 	public JCoSessionReference getCurrentSessionReference(String scopeType) {
-		JCoSessionReference sessionRef = CuckooManagedConnectionImpl.getLocalSessionReference();
+		JCoSessionReference sessionRef = CuckooJCoSessionTracker.getJCoSessionReference();
 		if (sessionRef != null) {
 			return sessionRef;
 		}
@@ -16,24 +15,23 @@ public class CuckooJCoSessionReferenceProvider implements SessionReferenceProvid
 	}
 
 	public boolean isSessionAlive(String sessionId) {
-		for (CuckooJCoSessionReference ref : CuckooManagedConnectionImpl.getSessions()) {
-			if (ref.getID().equals(sessionId)) {
-				return true;
-			}
-		}
-		return false;
+		return CuckooJCoSessionTracker.isSessionAlive(sessionId);
 	}
 
 	public void jcoServerSessionContinued(String sessionId) throws SessionException {
+		// Inbound not implemented
 	}
 
 	public void jcoServerSessionFinished(String sessionId) {
+		// Inbound not implemented
 	}
 
 	public void jcoServerSessionPassivated(String sessionId) throws SessionException {
+		// Inbound not implemented
 	}
 
-	public CuckooJCoSessionReference jcoServerSessionStarted() throws SessionException {
+	public JCoSessionReference jcoServerSessionStarted() throws SessionException {
+		// Inbound not implemented
 		return null;
 	}
 }

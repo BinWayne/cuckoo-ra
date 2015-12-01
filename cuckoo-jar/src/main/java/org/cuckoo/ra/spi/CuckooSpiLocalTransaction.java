@@ -23,42 +23,38 @@ import java.util.logging.Logger;
 import javax.resource.ResourceException;
 
 import org.cuckoo.ra.jco.CuckooJCoSessionReference;
+import org.cuckoo.ra.jco.CuckooJCoSessionTracker;
 
 public class CuckooSpiLocalTransaction implements javax.resource.spi.LocalTransaction {
 	private static final Logger LOG = Logger.getLogger(CuckooSpiLocalTransaction.class.getName());
 
 	private final CuckooManagedConnectionImpl managedConnection;
-	private final CuckooJCoSessionReference sapSessionReference = new CuckooJCoSessionReference();
+	private final CuckooJCoSessionReference sapSessionReference;
 
 	public CuckooSpiLocalTransaction(CuckooManagedConnectionImpl managedConnection) {
 		this.managedConnection = managedConnection;
+		this.sapSessionReference = new CuckooJCoSessionReference();
 	}
 
-	public void startJCoSession() {
-		CuckooManagedConnectionImpl.setLocalSessionReference(this.sapSessionReference);
-		CuckooManagedConnectionImpl.getSessions().add(this.sapSessionReference);
-	}
-
-	public void endJCoSession() {
-		/* remove current thread from set of active sessions */
-		CuckooManagedConnectionImpl.getSessions().remove(this.sapSessionReference);
+	public CuckooJCoSessionReference getSapSessionReference() {
+		return sapSessionReference;
 	}
 
 	public void begin() {
 		LOG.finest("Start transaction");
-		startJCoSession();
+		CuckooJCoSessionTracker.setJCoSessionReference(sapSessionReference);
 		managedConnection.startTransaction();
 	}
 
 	public void commit() throws ResourceException {
 		LOG.finest("Commit transaction");
+		CuckooJCoSessionTracker.setJCoSessionReference(sapSessionReference);
 		managedConnection.commitTransaction();
-		endJCoSession();
 	}
 
 	public void rollback() throws ResourceException {
 		LOG.finest("Rollback transaction");
+		CuckooJCoSessionTracker.setJCoSessionReference(sapSessionReference);
 		managedConnection.rollbackTransaction();
-		endJCoSession();
 	}
 }

@@ -38,7 +38,7 @@ import javax.transaction.xa.XAResource;
 import org.cuckoo.ra.cci.ApplicationProperties;
 import org.cuckoo.ra.cci.CuckooConnection;
 import org.cuckoo.ra.common.CuckooConnectionMetaData;
-import org.cuckoo.ra.jco.CuckooJCoSessionReference;
+import org.cuckoo.ra.jco.CuckooJCoSessionTracker;
 import org.cuckoo.ra.jco.JCoAdapter;
 
 public class CuckooManagedConnectionImpl implements CuckooManagedConnection {
@@ -54,32 +54,9 @@ public class CuckooManagedConnectionImpl implements CuckooManagedConnection {
 
 	private boolean inTransaction = false;
 
-	private static CuckooJCoSessionReference localSessionReference = null;
-
-	/*
-	 * @return local SapSessionReference for the current thread
-	 */
-	public static CuckooJCoSessionReference getLocalSessionReference() {
-		return localSessionReference;
-	}
-
-	public static void setLocalSessionReference(CuckooJCoSessionReference localSessionReference) {
-		CuckooManagedConnectionImpl.localSessionReference = localSessionReference;
-	}
-
-	private static List<CuckooJCoSessionReference> sessions = new ArrayList<CuckooJCoSessionReference>();
-
-	/*
-	 * @return mapping of threads to SapSessionReference objects
-	 */
-	public static List<CuckooJCoSessionReference> getSessions() {
-		return sessions;
-	}
-
 	CuckooManagedConnectionImpl(ConfigurationProperties configurationProperties,
 			ApplicationProperties applicationProperties) throws ResourceException {
 		LOG.entering("CuckooManagedConnectionImpl", "CuckooManagedConnectionImpl()");
-
 		this.configurationProperties = configurationProperties;
 		this.applicationProperties = applicationProperties;
 		this.localTransaction = new CuckooSpiLocalTransaction(this);
@@ -339,15 +316,13 @@ public class CuckooManagedConnectionImpl implements CuckooManagedConnection {
 	public MappedRecord executeFunction(String functionName, Record input) throws ResourceException {
 		LOG.entering("CuckooManagedConnectionImpl", "executeFunction()");
 
-		localTransaction.startJCoSession();
-		
+		CuckooJCoSessionTracker.setJCoSessionReference(getLocalTransaction().getSapSessionReference());
+
 		if (inTransaction) {
 			LOG.finer("Executing function in transaction");
-
 			return jCoAdapter.executeFunction(functionName, input);
 		} else {
 			LOG.finer("Executing function with auto-commit");
-
 			jCoAdapter.startTransaction();
 			try {
 				MappedRecord output = jCoAdapter.executeFunction(functionName, input);
@@ -369,14 +344,12 @@ public class CuckooManagedConnectionImpl implements CuckooManagedConnection {
 
 	void commitTransaction() throws ResourceException {
 		LOG.entering("CuckooManagedConnectionImpl", "commitTransaction()");
-		localTransaction.startJCoSession();
 		jCoAdapter.commitTransaction();
 		inTransaction = false;
 	}
 
 	void rollbackTransaction() throws ResourceException {
 		LOG.entering("CuckooManagedConnectionImpl", "rollbackTransaction()");
-		localTransaction.startJCoSession();
 		jCoAdapter.rollbackTransaction();
 		inTransaction = false;
 	}
