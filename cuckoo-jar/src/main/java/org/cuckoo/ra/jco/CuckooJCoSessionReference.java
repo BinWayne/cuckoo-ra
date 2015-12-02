@@ -14,11 +14,13 @@ public class CuckooJCoSessionReference implements JCoSessionReference {
 
 	public void contextFinished() {
 		LOG.entering("CuckooJCoSessionReference", "contextFinished");
+		LOG.fine("ContextFinished so removing session: " + id);
 		CuckooJCoSessionTracker.removeJCoSessionReference(this);
 	}
 
 	public void contextStarted() {
 		LOG.entering("CuckooJCoSessionReference", "contextStarted");
+		LOG.fine("ContextStarted for session: " + id);
 		CuckooJCoSessionTracker.setJCoSessionReference(this);
 	}
 

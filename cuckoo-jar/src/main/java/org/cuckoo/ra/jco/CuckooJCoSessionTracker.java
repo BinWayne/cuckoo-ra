@@ -32,14 +32,18 @@ public class CuckooJCoSessionTracker {
 		}
 	}
 
+	public static Hashtable<String, CuckooJCoSessionReference> getSessions() {
+		return sessions;
+	}
+
 	public static boolean isSessionAlive(String sessionId) {
 		LOG.entering("CuckooJCoSessionTracker", "isSessionAlive");
 
 		CuckooJCoSessionReference sessionReference = sessions.get(sessionId);
 		if (sessionReference != null) {
-			LOG.fine(sessionId + " has already been removed.");
 			return true;
 		}
+		LOG.fine(sessionId + " has already been removed.");
 		return false;
 	}
 }

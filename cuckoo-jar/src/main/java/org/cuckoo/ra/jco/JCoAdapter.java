@@ -79,7 +79,14 @@ public class JCoAdapter {
 		}
 
 		try {
+			CuckooJCoSessionReference pingSessionReference = new CuckooJCoSessionReference();
+			CuckooJCoSessionTracker.setJCoSessionReference(pingSessionReference);
+
+			LOG.fine("Created session " + pingSessionReference.getID() + " to call destination.ping()");
 			destination.ping();
+
+			CuckooJCoSessionTracker.removeJCoSessionReference(pingSessionReference);
+			LOG.fine("Removed " + pingSessionReference.getID());
 		} catch (JCoException e) {
 			if (e.getGroup() == JCoException.JCO_ERROR_LOGON_FAILURE) {
 				throw new javax.resource.spi.SecurityException("Failed logging on to SAP", e);
