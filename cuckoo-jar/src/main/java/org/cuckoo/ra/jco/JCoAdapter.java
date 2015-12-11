@@ -19,6 +19,7 @@
 package org.cuckoo.ra.jco;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.resource.ResourceException;
@@ -30,6 +31,7 @@ import org.cuckoo.ra.cci.ApplicationProperties;
 import org.cuckoo.ra.cci.CuckooMappedRecord;
 import org.cuckoo.ra.common.CuckooConnectionMetaData;
 
+import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoAttributes;
 import com.sap.conn.jco.JCoContext;
 import com.sap.conn.jco.JCoCustomDestination;
@@ -37,7 +39,6 @@ import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoDestinationManager;
 import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
-import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoStructure;
 
 public class JCoAdapter {
@@ -125,20 +126,24 @@ public class JCoAdapter {
 			LOG.finest("Getting JCo repository for destination: " + destination);
 			final JCoFunction function = destination.getRepository().getFunction(functionName);
 
-			final JCoParameterList importTableList = function.getTableParameterList();
-			final JCoParameterList importList = function.getImportParameterList();
-			mapper.populateImportRecord(importList, importTableList, (MappedRecord) inputRecord);
+			mapper.populateInputParameters(function, (MappedRecord) inputRecord);
 
 			LOG.finest("function before execute: " + function);
 
-			function.execute(destination);
+			try {
+				function.execute(destination);
+			} catch (AbapException e) {
+				// This will catch ABAP RAISE exception errors
+				final String message = e.getKey() + ": Error executing " + function.getName();
+				LOG.log(Level.SEVERE, message, e);
+				throw new ResourceException(message, e);
+			}
 
 			LOG.finest("function after execute: " + function);
 
-			mapper.checkForAbapExceptions(function);
 			final CuckooMappedRecord outputRecord = new CuckooMappedRecord(OUTPUT_RECORD_NAME);
+
 			mapper.convertExportParameters(function, outputRecord);
-			mapper.convertExportTable(function, outputRecord);
 
 			return outputRecord;
 		} catch (JCoException e) {

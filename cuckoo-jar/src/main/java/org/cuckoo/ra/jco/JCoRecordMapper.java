@@ -21,10 +21,8 @@ package org.cuckoo.ra.jco;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.resource.ResourceException;
 import javax.resource.cci.IndexedRecord;
 import javax.resource.cci.MappedRecord;
-import javax.resource.cci.Record;
 
 import org.cuckoo.ra.cci.CuckooIndexedRecord;
 import org.cuckoo.ra.cci.CuckooMappedRecord;
@@ -39,34 +37,47 @@ import com.sap.conn.jco.JCoTable;
 public class JCoRecordMapper {
 	private static final Logger LOG = Logger.getLogger(JCoRecordMapper.class.getName());
 
-	public void populateImportRecord(final JCoParameterList importList, final JCoParameterList tableList,
-			final MappedRecord mapRecord) {
-		for (Object o : mapRecord.entrySet()) {
-			final Map.Entry mapEntry = (Map.Entry) o;
-			final Object key = mapEntry.getKey();
-			final Object value = mapEntry.getValue();
+	public void populateInputParameters(JCoFunction function, MappedRecord inputRecord) {
+		final JCoParameterList importList = function.getImportParameterList();
+		final JCoParameterList changingList = function.getChangingParameterList();
+		final JCoParameterList tableList = function.getTableParameterList();
 
-			if (key instanceof String) {
-				final String fieldName = (String) key;
+		if (importList != null) {
+			populateImportRecord(importList, inputRecord);
+		}
 
-				if (value instanceof MappedRecord) {
-					// Import parameters
-					populateStructure(importList.getStructure(fieldName), (MappedRecord) value);
-				} else if (value instanceof IndexedRecord) {
-					// Table parameters
-					populateTable(tableList.getTable(fieldName), (IndexedRecord) value);
-				} else {
-					populateRecord(importList, fieldName, value);
-				}
-			} else if (key instanceof Integer) {
-				final int fieldId = (Integer) key;
+		if (changingList != null) {
+			populateImportRecord(changingList, inputRecord);
+		}
 
-				if (value instanceof MappedRecord) {
-					populateStructure(importList.getStructure(fieldId), (MappedRecord) value);
-				} else if (value instanceof IndexedRecord) {
-					populateTable(importList.getTable(fieldId), (IndexedRecord) value);
-				} else {
-					populateRecord(importList, fieldId, value);
+		if (tableList != null) {
+			populateImportRecord(tableList, inputRecord);
+		}
+	}
+
+	private void populateImportRecord(final JCoParameterList importList, final MappedRecord mapRecord) {
+		if (importList != null) {
+			JCoMetaData metaData = importList.getMetaData();
+			for (Object o : mapRecord.entrySet()) {
+				final Map.Entry mapEntry = (Map.Entry) o;
+				final Object key = mapEntry.getKey();
+				final Object value = mapEntry.getValue();
+
+				if (key instanceof String) {
+					final String fieldName = (String) key;
+
+					if (metaData.hasField(fieldName)) {
+						if (value instanceof MappedRecord) {
+							// Structure parameter
+							populateStructure(importList.getStructure(fieldName), (MappedRecord) value);
+						} else if (value instanceof IndexedRecord) {
+							// Table parameter
+							populateTable(importList.getTable(fieldName), (IndexedRecord) value);
+						} else {
+							// Simple parameter
+							populateRecord(importList, fieldName, value);
+						}
+					}
 				}
 			}
 		}
@@ -106,7 +117,7 @@ public class JCoRecordMapper {
 		}
 	}
 
-	public void populateTable(final JCoTable table, final IndexedRecord indexRecord) {
+	private void populateTable(final JCoTable table, final IndexedRecord indexRecord) {
 		for (final Object object : indexRecord) {
 			if (object instanceof MappedRecord) {
 				table.appendRow();
@@ -124,52 +135,54 @@ public class JCoRecordMapper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void populateStructure(final JCoStructure structure, final MappedRecord mapRecord) {
+		JCoMetaData metaData = structure.getMetaData();
 		for (final Object object : mapRecord.entrySet()) {
 			final Map.Entry mapEntry = (Map.Entry) object;
-			populateRecord(structure, mapEntry.getKey(), mapEntry.getValue());
+			final Object key = mapEntry.getKey();
+			final Object value = mapEntry.getValue();
+
+			if (key instanceof String) {
+				final String fieldName = (String) key;
+
+				if (metaData.hasField(fieldName)) {
+					if (value instanceof MappedRecord) {
+						// Structure
+						populateStructure(structure.getStructure(fieldName), (MappedRecord) value);
+					} else if (value instanceof IndexedRecord) {
+						// Tables
+						populateTable(structure.getTable(fieldName), (IndexedRecord) value);
+					} else {
+						// Simple
+						populateRecord(structure, key, value);
+					}
+				}
+			}
 		}
 	}
 
 	private void populateRecord(final JCoRecord jcoRecord, final Object fieldName, final Object fieldValue) {
-		if (fieldName instanceof String) {
+		JCoMetaData metaData = jcoRecord.getMetaData();
+		if (fieldValue != null && metaData.hasField((String) fieldName)) {
 			jcoRecord.setValue((String) fieldName, fieldValue);
-		} else if (fieldName instanceof Integer) {
-			jcoRecord.setValue((Integer) fieldName, fieldValue);
-		}
-	}
-
-	public void convertExportTable(final JCoFunction function, final Record resultRecord) {
-		final JCoParameterList exportTableList = function.getTableParameterList();
-
-		if (exportTableList != null) {
-			populateMappedRecord((MappedRecord) resultRecord, exportTableList);
 		}
 	}
 
 	public void convertExportParameters(final JCoFunction function, final MappedRecord resultRecord) {
 		final JCoParameterList exportList = function.getExportParameterList();
+		final JCoParameterList changingList = function.getChangingParameterList();
+		final JCoParameterList exportTableList = function.getTableParameterList();
 
 		if (exportList != null) {
 			populateMappedRecord(resultRecord, exportList);
 		}
-	}
 
-	public void checkForAbapExceptions(final JCoFunction function) throws ResourceException {
-		// TODO collect information from ABAP exceptions more intelligently
-		// final AbapException[] exceptions = function.getExceptionList();
-		//
-		// if ( exceptions != null && exceptions.length > 0 )
-		// {
-		// final String message = "Error executing " + function.getName();
-		//
-		// for ( final AbapException exc : exceptions )
-		// {
-		// LOG.log( Level.SEVERE, message, exc );
-		// }
-		//
-		// throw new ResourceException( message, exceptions[0] );
-		// }
+		if (changingList != null) {
+			populateMappedRecord(resultRecord, changingList);
+		}
+
+		if (exportTableList != null) {
+			populateMappedRecord(resultRecord, exportTableList);
+		}
 	}
 }
