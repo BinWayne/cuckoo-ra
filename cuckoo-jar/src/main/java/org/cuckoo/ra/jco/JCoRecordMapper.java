@@ -85,11 +85,25 @@ public class JCoRecordMapper {
 
 	@SuppressWarnings("unchecked")
 	private void populateIndexedRecord(final IndexedRecord indexedRecord, final JCoTable table) {
+		final JCoMetaData metaData = table.getMetaData();
 		for (int i = 0; i < table.getNumRows(); i++) {
+
 			final MappedRecord mappedRecord = new CuckooMappedRecord(indexedRecord.getRecordName() + ":row:" + i);
 
 			for (int j = 0; j < table.getNumColumns(); j++) {
-				mappedRecord.put(table.getMetaData().getName(j), table.getValue(j));
+				final String fieldName = metaData.getName(j);
+
+				if (metaData.isStructure(j)) {
+					final MappedRecord nestedMappedRecord = new CuckooMappedRecord(fieldName);
+					populateMappedRecord(nestedMappedRecord, table.getStructure(j));
+					mappedRecord.put(fieldName, nestedMappedRecord);
+				} else if (metaData.isTable(j)) {
+					final IndexedRecord nestedIndexedRecord = new CuckooIndexedRecord(fieldName);
+					populateIndexedRecord(nestedIndexedRecord, table.getTable(j));
+					mappedRecord.put(fieldName, nestedIndexedRecord);
+				} else {
+					mappedRecord.put(table.getMetaData().getName(j), table.getValue(j));
+				}
 			}
 
 			indexedRecord.add(mappedRecord);
