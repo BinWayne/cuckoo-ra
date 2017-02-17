@@ -38,13 +38,6 @@
     <url>http://git.code.sf.net/p/cuckoo-ra/git</url>
   </scm>
 
-  <distributionManagement>
-    <site>
-      <id>local</id>
-      <url>file:///tmp/cuckoo-site-${project.version}</url>
-    </site>
-  </distributionManagement>
-
   <build>
     <pluginManagement>
       <plugins>
