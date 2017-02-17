@@ -1,5 +1,5 @@
 <jboss-app>
-    <module>
-        <service>cuckoo-jboss-ds.xml</service>
-    </module>
+  <module>
+    <service>cuckoo-jboss-ds.xml</service>
+  </module>
 </jboss-app>

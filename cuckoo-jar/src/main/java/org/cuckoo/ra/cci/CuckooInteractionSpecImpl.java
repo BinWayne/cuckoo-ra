@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,20 +18,16 @@
  */
 package org.cuckoo.ra.cci;
 
-import javax.resource.cci.InteractionSpec;
+public class CuckooInteractionSpecImpl implements CuckooInteractionSpec {
 
-public class CuckooInteractionSpecImpl implements CuckooInteractionSpec
-{
     private String functionName;
 
-    public String getFunctionName()
-    {
+    public String getFunctionName() {
         return functionName;
     }
 
-    @SuppressWarnings( "unused" )
-    public void setFunctionName( String functionName )
-    {
+    @SuppressWarnings("unused")
+    public void setFunctionName(String functionName) {
         this.functionName = functionName;
     }
 }

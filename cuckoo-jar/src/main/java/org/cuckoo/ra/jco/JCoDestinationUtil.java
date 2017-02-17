@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -19,64 +19,59 @@
 package org.cuckoo.ra.jco;
 
 import com.sap.conn.jco.ext.DestinationDataProvider;
-import org.cuckoo.ra.spi.ConfigurationProperties;
-
 import java.util.Properties;
 import java.util.logging.Logger;
+import org.cuckoo.ra.spi.ConfigurationProperties;
 
-public class JCoDestinationUtil
-{
-    private static final Logger LOG = Logger.getLogger( JCoDestinationUtil.class.getName() );
+public class JCoDestinationUtil {
 
-    private JCoDestinationUtil()
-    {
+    private static final Logger LOG = Logger.getLogger(JCoDestinationUtil.class.getName());
+
+    private JCoDestinationUtil() {
         // use static methods
     }
 
-    public static Properties createJCoDestinationProperties( ConfigurationProperties config )
-    {
-        LOG.entering( "ConfigurationPropertiesImpl", "createJCoDestinationProperties()" );
+    public static Properties createJCoDestinationProperties(ConfigurationProperties config) {
+        LOG.entering("ConfigurationPropertiesImpl", "createJCoDestinationProperties()");
 
         final Properties properties = new Properties();
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_CLIENT, config.getJcoClient() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_USER, config.getUsername() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_ALIAS_USER, config.getJcoAliasUser() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_PASSWD, config.getPassword() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_LANG, config.getJcoLanguage() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_SAPROUTER, config.getJcoSapRouter() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_SYSNR, config.getJcoSystemNumber() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_ASHOST, config.getJcoApplicationServerHost() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_MSHOST, config.getJcoMessageServerHost() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_MSSERV, config.getJcoMessageServerPort() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_R3NAME, config.getJcoR3Name() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_GROUP, config.getJcoGroup() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_TRACE, config.getJcoTrace() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_CPIC_TRACE, config.getJcoCpicTrace() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_USE_SAPGUI, config.getJcoUseSapgui() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_CODEPAGE, config.getJcoCodepage() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_SNC_MODE, config.getJcoSncMode() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_SNC_PARTNERNAME, config.getJcoSncPartnername() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_SNC_QOP, config.getJcoSncQop() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_SNC_MYNAME, config.getJcoSncMyName() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_SNC_LIBRARY, config.getJcoSncLibrary() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_REPOSITORY_DEST,
-                config.getJcoRepositoryDestination() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_REPOSITORY_USER, config.getJcoRepositoryUser() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_REPOSITORY_PASSWD,
-                config.getJcoRepositoryPassword() );
-        addPropertyNullSafe( properties, DestinationDataProvider.JCO_REPOSITORY_SNC, config.getJcoRepositorySncMode() );
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_CLIENT, config.getJcoClient());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_USER, config.getUsername());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_ALIAS_USER, config.getJcoAliasUser());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_PASSWD, config.getPassword());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_LANG, config.getJcoLanguage());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_SAPROUTER, config.getJcoSapRouter());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_SYSNR, config.getJcoSystemNumber());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_ASHOST, config.getJcoApplicationServerHost());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_MSHOST, config.getJcoMessageServerHost());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_MSSERV, config.getJcoMessageServerPort());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_R3NAME, config.getJcoR3Name());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_GROUP, config.getJcoGroup());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_TRACE, config.getJcoTrace());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_CPIC_TRACE, config.getJcoCpicTrace());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_USE_SAPGUI, config.getJcoUseSapgui());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_CODEPAGE, config.getJcoCodepage());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_SNC_MODE, config.getJcoSncMode());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_SNC_PARTNERNAME, config.getJcoSncPartnername());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_SNC_QOP, config.getJcoSncQop());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_SNC_MYNAME, config.getJcoSncMyName());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_SNC_LIBRARY, config.getJcoSncLibrary());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_REPOSITORY_DEST,
+                config.getJcoRepositoryDestination());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_REPOSITORY_USER, config.getJcoRepositoryUser());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_REPOSITORY_PASSWD,
+                config.getJcoRepositoryPassword());
+        addPropertyNullSafe(properties, DestinationDataProvider.JCO_REPOSITORY_SNC, config.getJcoRepositorySncMode());
 
         // A pool_capacity value of 0 disables connection pooling
         // The pool shall be maintained by the container, not by JCo
-        properties.setProperty( DestinationDataProvider.JCO_POOL_CAPACITY, "0" );
+        properties.setProperty(DestinationDataProvider.JCO_POOL_CAPACITY, "0");
         return properties;
     }
 
-    private static void addPropertyNullSafe( Properties properties, String name, String value )
-    {
-        if ( value != null )
-        {
-            properties.setProperty( name, value );
+    private static void addPropertyNullSafe(Properties properties, String name, String value) {
+        if (value != null) {
+            properties.setProperty(name, value);
         }
     }
 }

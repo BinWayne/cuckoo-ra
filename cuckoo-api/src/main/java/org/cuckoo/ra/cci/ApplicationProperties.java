@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -28,21 +28,21 @@ import javax.resource.cci.ConnectionSpec;
  * @see javax.resource.cci.ConnectionFactory
  * @see javax.resource.cci.Connection
  */
-public interface ApplicationProperties extends ConnectionSpec
-{
-    ApplicationProperties setUser( String user );
+public interface ApplicationProperties extends ConnectionSpec {
 
-    ApplicationProperties setAliasUser( String aliasUser );
+    ApplicationProperties setUser(String user);
 
-    ApplicationProperties setPassword( String password );
+    ApplicationProperties setAliasUser(String aliasUser);
 
-    ApplicationProperties setClient( String client );
+    ApplicationProperties setPassword(String password);
 
-    ApplicationProperties setLanguage( String language );
+    ApplicationProperties setClient(String client);
 
-    ApplicationProperties setSsoTicket( String ssoTicket );
+    ApplicationProperties setLanguage(String language);
 
-    ApplicationProperties setX509Certificate( String x509Certificate );
+    ApplicationProperties setSsoTicket(String ssoTicket);
+
+    ApplicationProperties setX509Certificate(String x509Certificate);
 
     String getUser();
 

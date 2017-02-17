@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -22,18 +22,15 @@ import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionMetaData;
 import javax.resource.spi.ManagedConnectionMetaData;
 
+public class CuckooConnectionMetaData implements ManagedConnectionMetaData, ConnectionMetaData {
 
-public class CuckooConnectionMetaData implements ManagedConnectionMetaData, ConnectionMetaData
-{
     private final String eisProductName;
     private final String eisProductVersion;
     private final int maxConnections;
     private final String userName;
 
-
-    public CuckooConnectionMetaData( String eisProductName, String eisProductVersion, int maxConnections,
-                                     String userName )
-    {
+    public CuckooConnectionMetaData(String eisProductName, String eisProductVersion, int maxConnections,
+                                    String userName) {
         this.eisProductName = eisProductName;
         this.eisProductVersion = eisProductVersion;
         this.maxConnections = maxConnections;
@@ -46,8 +43,7 @@ public class CuckooConnectionMetaData implements ManagedConnectionMetaData, Conn
      * @return Product name of the EIS instance
      * @throws ResourceException Thrown if an error occurs
      */
-    public String getEISProductName() throws ResourceException
-    {
+    public String getEISProductName() throws ResourceException {
         return eisProductName;
     }
 
@@ -57,8 +53,7 @@ public class CuckooConnectionMetaData implements ManagedConnectionMetaData, Conn
      * @return Product version of the EIS instance
      * @throws ResourceException Thrown if an error occurs
      */
-    public String getEISProductVersion() throws ResourceException
-    {
+    public String getEISProductVersion() throws ResourceException {
         return eisProductVersion;
     }
 
@@ -68,8 +63,7 @@ public class CuckooConnectionMetaData implements ManagedConnectionMetaData, Conn
      * @return Maximum limit for number of active concurrent connections, a value of '0' means unlimited
      * @throws ResourceException Thrown if an error occurs
      */
-    public int getMaxConnections() throws ResourceException
-    {
+    public int getMaxConnections() throws ResourceException {
         return maxConnections;
     }
 
@@ -79,8 +73,7 @@ public class CuckooConnectionMetaData implements ManagedConnectionMetaData, Conn
      * @return name of the user
      * @throws ResourceException Thrown if an error occurs
      */
-    public String getUserName() throws ResourceException
-    {
+    public String getUserName() throws ResourceException {
         return userName;
     }
 }

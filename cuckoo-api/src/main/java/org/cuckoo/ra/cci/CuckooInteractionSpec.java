@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -23,7 +23,7 @@ import javax.resource.cci.InteractionSpec;
 /**
  * A CuckooInteractionSpec holds a property for passing the function name to be called
  * when executing an Interaction with a SAP instance.
- *
+ * <p>
  * Alternatively, the function name can be provided with the input Record when calling
  * Interaction.execute(). In this case, the function name has to be provided as the
  * name of the input record and instead of an InteractionSpec object, null can be passed
@@ -33,10 +33,10 @@ import javax.resource.cci.InteractionSpec;
  * @see javax.resource.cci.Interaction
  * @see javax.resource.cci.Record
  */
-public interface CuckooInteractionSpec extends InteractionSpec
-{
+public interface CuckooInteractionSpec extends InteractionSpec {
+
     String getFunctionName();
 
-    @SuppressWarnings( "unused" )
-    void setFunctionName( String functionName );
+    @SuppressWarnings("unused")
+    void setFunctionName(String functionName);
 }

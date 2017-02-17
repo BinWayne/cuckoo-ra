@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -20,10 +20,9 @@ package org.cuckoo.ra.cci;
 
 import javax.resource.spi.ConnectionRequestInfo;
 
+@SuppressWarnings("unused")
+public final class ApplicationPropertiesImpl implements ConnectionRequestInfo, ApplicationProperties {
 
-@SuppressWarnings( "unused" )
-public final class ApplicationPropertiesImpl implements ConnectionRequestInfo, ApplicationProperties
-{
     private String user;
     private String aliasUser;
     private String password;
@@ -37,8 +36,7 @@ public final class ApplicationPropertiesImpl implements ConnectionRequestInfo, A
      *
      * @param applicationProperties The ApplicationProperties that is used to create a copy.
      */
-    ApplicationPropertiesImpl( ApplicationPropertiesImpl applicationProperties )
-    {
+    ApplicationPropertiesImpl(ApplicationPropertiesImpl applicationProperties) {
         this.user = applicationProperties.user;
         this.aliasUser = applicationProperties.aliasUser;
         this.password = applicationProperties.password;
@@ -48,19 +46,16 @@ public final class ApplicationPropertiesImpl implements ConnectionRequestInfo, A
         this.x509Certificate = applicationProperties.x509Certificate;
     }
 
-    public ApplicationPropertiesImpl()
-    {
+    public ApplicationPropertiesImpl() {
     }
 
-    public ApplicationPropertiesImpl( String username, String password )
-    {
+    public ApplicationPropertiesImpl(String username, String password) {
         this.user = username;
         this.password = password;
     }
 
-    public ApplicationPropertiesImpl( String user, String password, String language, String client, String aliasUser,
-                                      String ssoTicket, String x509Certificate )
-    {
+    public ApplicationPropertiesImpl(String user, String password, String language, String client, String aliasUser,
+                                     String ssoTicket, String x509Certificate) {
         this(user, password);
         this.language = language;
         this.client = client;
@@ -69,124 +64,100 @@ public final class ApplicationPropertiesImpl implements ConnectionRequestInfo, A
         this.x509Certificate = x509Certificate;
     }
 
-    public ApplicationProperties setUser( String user )
-    {
+    public ApplicationProperties setUser(String user) {
         this.user = user;
         return this;
     }
 
-    public ApplicationProperties setAliasUser( String aliasUser )
-    {
+    public ApplicationProperties setAliasUser(String aliasUser) {
         this.aliasUser = aliasUser;
         return this;
     }
 
-    public ApplicationProperties setPassword( String password )
-    {
+    public ApplicationProperties setPassword(String password) {
         this.password = password;
         return this;
     }
 
-    public ApplicationProperties setClient( String client )
-    {
+    public ApplicationProperties setClient(String client) {
         this.client = client;
         return this;
     }
 
-    public ApplicationProperties setLanguage( String language )
-    {
+    public ApplicationProperties setLanguage(String language) {
         this.language = language;
         return this;
     }
 
-    public ApplicationProperties setSsoTicket( String ssoTicket )
-    {
+    public ApplicationProperties setSsoTicket(String ssoTicket) {
         this.ssoTicket = ssoTicket;
         return this;
     }
 
-    public ApplicationProperties setX509Certificate( String x509Certificate )
-    {
+    public ApplicationProperties setX509Certificate(String x509Certificate) {
         this.x509Certificate = x509Certificate;
         return this;
     }
 
-    public String getUser()
-    {
+    public String getUser() {
         return user;
     }
 
-    public String getAliasUser()
-    {
+    public String getAliasUser() {
         return aliasUser;
     }
 
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
-    public String getClient()
-    {
+    public String getClient() {
         return client;
     }
 
-    public String getLanguage()
-    {
+    public String getLanguage() {
         return language;
     }
 
-    public String getSsoTicket()
-    {
+    public String getSsoTicket() {
         return ssoTicket;
     }
 
-    public String getX509Certificate()
-    {
+    public String getX509Certificate() {
         return x509Certificate;
     }
 
-    @SuppressWarnings( {"RedundantIfStatement"} )
+    @SuppressWarnings({"RedundantIfStatement"})
     @Override
-    public boolean equals( Object o )
-    {
-        if ( this == o )
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
-        ApplicationPropertiesImpl that = ( ApplicationPropertiesImpl ) o;
+        ApplicationPropertiesImpl that = (ApplicationPropertiesImpl) o;
 
-        if ( aliasUser != null ? !aliasUser.equals( that.aliasUser ) : that.aliasUser != null )
-        {
+        if (aliasUser != null ? !aliasUser.equals(that.aliasUser) : that.aliasUser != null) {
             return false;
         }
-        if ( client != null ? !client.equals( that.client ) : that.client != null )
-        {
+        if (client != null ? !client.equals(that.client) : that.client != null) {
             return false;
         }
-        if ( language != null ? !language.equals( that.language ) : that.language != null )
-        {
+        if (language != null ? !language.equals(that.language) : that.language != null) {
             return false;
         }
-        if ( password != null ? !password.equals( that.password ) : that.password != null )
-        {
+        if (password != null ? !password.equals(that.password) : that.password != null) {
             return false;
         }
-        if ( ssoTicket != null ? !ssoTicket.equals( that.ssoTicket ) : that.ssoTicket != null )
-        {
+        if (ssoTicket != null ? !ssoTicket.equals(that.ssoTicket) : that.ssoTicket != null) {
             return false;
         }
-        if ( user != null ? !user.equals( that.user ) : that.user != null )
-        {
+        if (user != null ? !user.equals(that.user) : that.user != null) {
             return false;
         }
-        if ( x509Certificate != null ? !x509Certificate.equals( that.x509Certificate ) : that.x509Certificate != null )
-        {
+        if (x509Certificate != null ? !x509Certificate.equals(that.x509Certificate) : that.x509Certificate != null) {
             return false;
         }
 
@@ -194,21 +165,19 @@ public final class ApplicationPropertiesImpl implements ConnectionRequestInfo, A
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = user != null ? user.hashCode() : 0;
-        result = 31 * result + ( aliasUser != null ? aliasUser.hashCode() : 0 );
-        result = 31 * result + ( password != null ? password.hashCode() : 0 );
-        result = 31 * result + ( client != null ? client.hashCode() : 0 );
-        result = 31 * result + ( language != null ? language.hashCode() : 0 );
-        result = 31 * result + ( ssoTicket != null ? ssoTicket.hashCode() : 0 );
-        result = 31 * result + ( x509Certificate != null ? x509Certificate.hashCode() : 0 );
+        result = 31 * result + (aliasUser != null ? aliasUser.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (client != null ? client.hashCode() : 0);
+        result = 31 * result + (language != null ? language.hashCode() : 0);
+        result = 31 * result + (ssoTicket != null ? ssoTicket.hashCode() : 0);
+        result = 31 * result + (x509Certificate != null ? x509Certificate.hashCode() : 0);
         return result;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ApplicationProperties{" +
                 "aliasUser='" + aliasUser + '\'' +
                 ", user='" + user + '\'' +

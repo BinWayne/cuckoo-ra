@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <connector>
-    <description_broken>Description</description_broken>
-    <display-name/>
-    <vendor-name>Vendor Name</vendor-name>
-    <eis-type>EIS Type</eis-type>
-    <resourceadapter-version>Resource Adapter Version</resourceadapter-version>
-    <resourceadapter/>
+  <description_broken>Description</description_broken>
+  <display-name/>
+  <vendor-name>Vendor Name</vendor-name>
+  <eis-type>EIS Type</eis-type>
+  <resourceadapter-version>Resource Adapter Version</resourceadapter-version>
+  <resourceadapter/>
 </connector>

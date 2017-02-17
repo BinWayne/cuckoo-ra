@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,53 +18,46 @@
  */
 package org.cuckoo.ra.cci;
 
+import java.util.logging.Logger;
+import javax.resource.cci.MappedRecord;
 import org.cuckoo.ra.util.ForwardingMap;
 
-import javax.resource.cci.MappedRecord;
-import java.util.logging.Logger;
+public class CuckooMappedRecord extends ForwardingMap implements MappedRecord {
 
-public class CuckooMappedRecord extends ForwardingMap implements MappedRecord
-{
-    private static final Logger LOG = Logger.getLogger( CuckooMappedRecord.class.getName() );
+    private static final Logger LOG = Logger.getLogger(CuckooMappedRecord.class.getName());
 
     private String recordName;
     private String recordShortDescription;
 
-    @SuppressWarnings( "unchecked" )
-    public CuckooMappedRecord( String recordName )
-    {
-        LOG.entering( "CuckooMappedRecord", "CuckooMappedRecord()" );
+    @SuppressWarnings("unchecked")
+    public CuckooMappedRecord(String recordName) {
+        LOG.entering("CuckooMappedRecord", "CuckooMappedRecord()");
         this.recordName = recordName;
     }
 
-    public String getRecordName()
-    {
+    public String getRecordName() {
         return recordName;
     }
 
-    public void setRecordName( String recordName )
-    {
+    public void setRecordName(String recordName) {
         this.recordName = recordName;
     }
 
-    public void setRecordShortDescription( String recordShortDescription )
-    {
+    public void setRecordShortDescription(String recordShortDescription) {
         this.recordShortDescription = recordShortDescription;
     }
 
-    public String getRecordShortDescription()
-    {
+    public String getRecordShortDescription() {
         return recordShortDescription;
     }
 
     @Override
-    public CuckooMappedRecord clone() throws CloneNotSupportedException
-    {
-        LOG.finer( "CuckooMappedRecord.clone()" );
+    public CuckooMappedRecord clone() throws CloneNotSupportedException {
+        LOG.finer("CuckooMappedRecord.clone()");
 
-        CuckooMappedRecord clone = ( CuckooMappedRecord ) super.clone();
-        clone.setRecordName( recordName );
-        clone.setRecordShortDescription( recordShortDescription );
+        CuckooMappedRecord clone = (CuckooMappedRecord) super.clone();
+        clone.setRecordName(recordName);
+        clone.setRecordShortDescription(recordShortDescription);
         return clone;
     }
 }

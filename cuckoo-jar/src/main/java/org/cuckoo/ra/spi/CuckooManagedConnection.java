@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,34 +18,33 @@
  */
 package org.cuckoo.ra.spi;
 
-import org.cuckoo.ra.cci.CuckooConnection;
-import org.cuckoo.ra.common.CuckooConnectionMetaData;
-
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.MappedRecord;
 import javax.resource.cci.Record;
 import javax.resource.spi.ManagedConnection;
+import org.cuckoo.ra.cci.CuckooConnection;
+import org.cuckoo.ra.common.CuckooConnectionMetaData;
 
-public interface CuckooManagedConnection extends ManagedConnection
-{
-    void notifyConnectionClosed( CuckooConnection connection );
+public interface CuckooManagedConnection extends ManagedConnection {
 
-    MappedRecord executeFunction( String functionName, Record input ) throws ResourceException;
+    void notifyConnectionClosed(CuckooConnection connection);
 
-    void notifyLocalTransactionStartedEvent( Connection connectionHandle );
+    MappedRecord executeFunction(String functionName, Record input) throws ResourceException;
 
-    void notifyLocalTransactionCommittedEvent( Connection connectionHandle );
+    void notifyLocalTransactionStartedEvent(Connection connectionHandle);
 
-    void notifyLocalTransactionRolledbackEvent( Connection connectionHandle );
+    void notifyLocalTransactionCommittedEvent(Connection connectionHandle);
 
-    void beginLocalTransaction( Connection connectionHandle );
+    void notifyLocalTransactionRolledbackEvent(Connection connectionHandle);
 
-    void commitLocalTransaction( Connection connectionHandle ) throws ResourceException;
+    void beginLocalTransaction(Connection connectionHandle);
 
-    void rollbackLocalTransaction( Connection connectionHandle ) throws ResourceException;
+    void commitLocalTransaction(Connection connectionHandle) throws ResourceException;
 
-    void disassociateConnection( CuckooConnection connection ) throws ResourceException;
+    void rollbackLocalTransaction(Connection connectionHandle) throws ResourceException;
+
+    void disassociateConnection(CuckooConnection connection) throws ResourceException;
 
     CuckooConnectionMetaData getMetaData() throws ResourceException;
 }

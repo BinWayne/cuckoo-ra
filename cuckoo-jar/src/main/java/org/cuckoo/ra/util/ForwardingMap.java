@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -24,83 +24,68 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ForwardingMap<K, V> implements Map<K, V>, Serializable, Cloneable
-{
+public class ForwardingMap<K, V> implements Map<K, V>, Serializable, Cloneable {
+
     private HashMap<K, V> m = new HashMap<K, V>();
 
-    public int size()
-    {
+    public int size() {
         return m.size();
     }
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return m.isEmpty();
     }
 
-    public boolean containsKey( Object key )
-    {
-        return m.containsKey( key );
+    public boolean containsKey(Object key) {
+        return m.containsKey(key);
     }
 
-    public boolean containsValue( Object value )
-    {
-        return m.containsValue( value );
+    public boolean containsValue(Object value) {
+        return m.containsValue(value);
     }
 
-    public V get( Object key )
-    {
-        return m.get( key );
+    public V get(Object key) {
+        return m.get(key);
     }
 
-    public V put( K key, V value )
-    {
-        return m.put( key, value );
+    public V put(K key, V value) {
+        return m.put(key, value);
     }
 
-    public V remove( Object key )
-    {
-        return m.remove( key );
+    public V remove(Object key) {
+        return m.remove(key);
     }
 
-    public void putAll( Map<? extends K, ? extends V> m )
-    {
-        this.m.putAll( m );
+    public void putAll(Map<? extends K, ? extends V> m) {
+        this.m.putAll(m);
     }
 
-    public void clear()
-    {
+    public void clear() {
         m.clear();
     }
 
-    public Set<K> keySet()
-    {
+    public Set<K> keySet() {
         return m.keySet();
     }
 
-    public Collection<V> values()
-    {
+    public Collection<V> values() {
         return m.values();
     }
 
-    public Set<Entry<K, V>> entrySet()
-    {
+    public Set<Entry<K, V>> entrySet() {
         return m.entrySet();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return m.toString();
     }
 
-
     @Override
-    @SuppressWarnings( {"unchecked"} )
-    protected ForwardingMap<K, V> clone() throws CloneNotSupportedException
-    {
-        ForwardingMap<K, V> clone = ( ForwardingMap<K, V> ) super.clone();
-        clone.m = ( HashMap<K, V> ) m.clone();
+    @SuppressWarnings({"unchecked"})
+    protected ForwardingMap<K, V> clone() throws CloneNotSupportedException {
+        ForwardingMap<K, V> clone = (ForwardingMap<K, V>) super.clone();
+        clone.m = (HashMap<K, V>) m.clone();
         return clone;
     }
 }

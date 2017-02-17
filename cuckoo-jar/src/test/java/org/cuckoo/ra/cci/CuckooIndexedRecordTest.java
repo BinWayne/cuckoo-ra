@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -19,65 +19,62 @@
 package org.cuckoo.ra.cci;
 
 import org.junit.Test;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.cuckoo.ra.util.CuckooTestUtil.serializeAndReturnDeserializedObject;
-import static org.fest.assertions.Assertions.assertThat;
 
-@SuppressWarnings( {"unchecked"} )
-public class CuckooIndexedRecordTest
-{
+@SuppressWarnings({"unchecked"})
+public class CuckooIndexedRecordTest {
+
     @Test
-    public void isSerializable() throws Exception
-    {
-        CuckooIndexedRecord record = new CuckooIndexedRecord( "recordName" );
-        record.setRecordShortDescription( "recordShortDescription" );
-        record.add( "aString" );
-        CuckooIndexedRecord innerRecord = new CuckooIndexedRecord( "innerRecordName" );
-        innerRecord.add( "anotherString" );
-        record.add( innerRecord );
+    public void isSerializable() throws Exception {
+        CuckooIndexedRecord record = new CuckooIndexedRecord("recordName");
+        record.setRecordShortDescription("recordShortDescription");
+        record.add("aString");
+        CuckooIndexedRecord innerRecord = new CuckooIndexedRecord("innerRecordName");
+        innerRecord.add("anotherString");
+        record.add(innerRecord);
 
-        CuckooIndexedRecord deserializedRecord = serializeAndReturnDeserializedObject( record );
+        CuckooIndexedRecord deserializedRecord = serializeAndReturnDeserializedObject(record);
 
-        assertThat( deserializedRecord ).isNotSameAs( record );
+        assertThat(deserializedRecord).isNotSameAs(record);
 
-        assertThat( deserializedRecord.getRecordName() ).isEqualTo( "recordName" );
-        assertThat( deserializedRecord.getRecordShortDescription() ).isEqualTo( "recordShortDescription" );
+        assertThat(deserializedRecord.getRecordName()).isEqualTo("recordName");
+        assertThat(deserializedRecord.getRecordShortDescription()).isEqualTo("recordShortDescription");
 
-        assertThat( deserializedRecord ).hasSize( 2 );
+        assertThat(deserializedRecord).hasSize(2);
 
-        assertThat( ( String ) deserializedRecord.get( 0 ) ).isEqualTo( "aString" );
-        CuckooIndexedRecord deserializedInnerRecord = ( CuckooIndexedRecord ) deserializedRecord.get( 1 );
+        assertThat((String) deserializedRecord.get(0)).isEqualTo("aString");
+        CuckooIndexedRecord deserializedInnerRecord = (CuckooIndexedRecord) deserializedRecord.get(1);
 
-        assertThat( deserializedInnerRecord ).isNotSameAs( innerRecord );
-        assertThat( deserializedInnerRecord ).hasSize( 1 );
-        assertThat( deserializedInnerRecord.getRecordName() ).isEqualTo( "innerRecordName" );
-        assertThat( deserializedInnerRecord.getRecordShortDescription() ).isNull();
-        assertThat( ( String ) deserializedInnerRecord.get( 0 ) ).isEqualTo( "anotherString" );
+        assertThat(deserializedInnerRecord).isNotSameAs(innerRecord);
+        assertThat(deserializedInnerRecord).hasSize(1);
+        assertThat(deserializedInnerRecord.getRecordName()).isEqualTo("innerRecordName");
+        assertThat(deserializedInnerRecord.getRecordShortDescription()).isNull();
+        assertThat((String) deserializedInnerRecord.get(0)).isEqualTo("anotherString");
     }
 
     @Test
-    public void isCloneable() throws Exception
-    {
-        CuckooIndexedRecord record = new CuckooIndexedRecord( "recordName" );
-        record.setRecordShortDescription( "recordShortDescription" );
-        record.add( "aString" );
-        CuckooIndexedRecord innerRecord = new CuckooIndexedRecord( "innerRecordName" );
-        innerRecord.add( "anotherString" );
-        record.add( innerRecord );
+    public void isCloneable() throws Exception {
+        CuckooIndexedRecord record = new CuckooIndexedRecord("recordName");
+        record.setRecordShortDescription("recordShortDescription");
+        record.add("aString");
+        CuckooIndexedRecord innerRecord = new CuckooIndexedRecord("innerRecordName");
+        innerRecord.add("anotherString");
+        record.add(innerRecord);
 
         CuckooIndexedRecord clone = record.clone();
 
-        assertThat( clone ).isNotSameAs( record );
+        assertThat(clone).isNotSameAs(record);
 
-        assertThat( clone.getRecordName() ).isEqualTo( "recordName" );
-        assertThat( clone.getRecordShortDescription() ).isEqualTo( "recordShortDescription" );
-        assertThat( clone ).hasSize( 2 );
-        assertThat( ( String ) clone.get( 0 ) ).isEqualTo( "aString" );
+        assertThat(clone.getRecordName()).isEqualTo("recordName");
+        assertThat(clone.getRecordShortDescription()).isEqualTo("recordShortDescription");
+        assertThat(clone).hasSize(2);
+        assertThat((String) clone.get(0)).isEqualTo("aString");
 
-        CuckooIndexedRecord innerRecordClone = ( CuckooIndexedRecord ) clone.get( 1 );
-        assertThat( innerRecordClone ).hasSize( 1 );
-        assertThat( innerRecordClone.getRecordName() ).isEqualTo( "innerRecordName" );
-        assertThat( innerRecordClone.getRecordShortDescription() ).isNull();
-        assertThat( ( String ) innerRecordClone.get( 0 ) ).isEqualTo( "anotherString" );
+        CuckooIndexedRecord innerRecordClone = (CuckooIndexedRecord) clone.get(1);
+        assertThat(innerRecordClone).hasSize(1);
+        assertThat(innerRecordClone.getRecordName()).isEqualTo("innerRecordName");
+        assertThat(innerRecordClone.getRecordShortDescription()).isNull();
+        assertThat((String) innerRecordClone.get(0)).isEqualTo("anotherString");
     }
 }

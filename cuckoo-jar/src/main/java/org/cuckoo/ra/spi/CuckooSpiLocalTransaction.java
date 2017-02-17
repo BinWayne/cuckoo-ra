@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,36 +18,31 @@
  */
 package org.cuckoo.ra.spi;
 
-import javax.resource.ResourceException;
 import java.util.logging.Logger;
+import javax.resource.ResourceException;
 
-public class CuckooSpiLocalTransaction implements javax.resource.spi.LocalTransaction
-{
-    private static final Logger LOG = Logger.getLogger( CuckooSpiLocalTransaction.class.getName() );
+public class CuckooSpiLocalTransaction implements javax.resource.spi.LocalTransaction {
+
+    private static final Logger LOG = Logger.getLogger(CuckooSpiLocalTransaction.class.getName());
 
     private final CuckooManagedConnectionImpl managedConnection;
 
-
-    public CuckooSpiLocalTransaction( CuckooManagedConnectionImpl managedConnection )
-    {
+    public CuckooSpiLocalTransaction(CuckooManagedConnectionImpl managedConnection) {
         this.managedConnection = managedConnection;
     }
 
-    public void begin()
-    {
-        LOG.finest( "Start transaction" );
+    public void begin() {
+        LOG.finest("Start transaction");
         managedConnection.startTransaction();
     }
 
-    public void commit() throws ResourceException
-    {
-        LOG.finest( "Commit transaction" );
+    public void commit() throws ResourceException {
+        LOG.finest("Commit transaction");
         managedConnection.commitTransaction();
     }
 
-    public void rollback() throws ResourceException
-    {
-        LOG.finest( "Rollback transaction" );
+    public void rollback() throws ResourceException {
+        LOG.finest("Rollback transaction");
         managedConnection.rollbackTransaction();
     }
 }

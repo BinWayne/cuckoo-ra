@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,31 +18,28 @@
  */
 package org.cuckoo.ra.spi;
 
-import org.cuckoo.ra.cci.CuckooConnection;
-
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
+import org.cuckoo.ra.cci.CuckooConnection;
 
 // TODO
-public class CuckooConnectionManager implements ConnectionManager
-{
-   CuckooConnectionManager()
-   {
-       throw new UnsupportedOperationException("Support for non-managed environments not yet implemented");
-   }
+public class CuckooConnectionManager implements ConnectionManager {
 
-   /**
-    * Allocate a connection
-    *
-    * @param mcf The managed connection factory
-    * @param cri The connection request information
-    * @return Object The connection
-    * @exception ResourceException Thrown if an error occurs
-    */
-   public CuckooConnection allocateConnection(ManagedConnectionFactory mcf,ConnectionRequestInfo cri) throws ResourceException
-   {
-      return null;
-   }
+    CuckooConnectionManager() {
+        throw new UnsupportedOperationException("Support for non-managed environments not yet implemented");
+    }
+
+    /**
+     * Allocate a connection
+     *
+     * @param mcf The managed connection factory
+     * @param cri The connection request information
+     * @return Object The connection
+     * @throws ResourceException Thrown if an error occurs
+     */
+    public CuckooConnection allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException {
+        return null;
+    }
 }

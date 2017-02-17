@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,42 +18,36 @@
  */
 package org.cuckoo.ra.cci;
 
-import org.cuckoo.ra.spi.CuckooManagedConnection;
-
+import java.util.logging.Logger;
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
-import java.util.logging.Logger;
+import org.cuckoo.ra.spi.CuckooManagedConnection;
 
-public class CuckooCciLocalTransaction implements javax.resource.cci.LocalTransaction
-{
-    private static final Logger LOG = Logger.getLogger( CuckooCciLocalTransaction.class.getName() );
+public class CuckooCciLocalTransaction implements javax.resource.cci.LocalTransaction {
+
+    private static final Logger LOG = Logger.getLogger(CuckooCciLocalTransaction.class.getName());
 
     private final Connection connectionHandle;
 
     private final CuckooManagedConnection managedConnection;
 
-
-    CuckooCciLocalTransaction( CuckooManagedConnection managedConnection, Connection connectionHandle )
-    {
+    CuckooCciLocalTransaction(CuckooManagedConnection managedConnection, Connection connectionHandle) {
         this.managedConnection = managedConnection;
         this.connectionHandle = connectionHandle;
     }
 
-    public void begin() throws ResourceException
-    {
-        LOG.entering( "CuckooCciLocalTransaction", "begin()" );
-        managedConnection.beginLocalTransaction( connectionHandle );
+    public void begin() throws ResourceException {
+        LOG.entering("CuckooCciLocalTransaction", "begin()");
+        managedConnection.beginLocalTransaction(connectionHandle);
     }
 
-    public void commit() throws ResourceException
-    {
-        LOG.entering( "CuckooCciLocalTransaction", "commit()" );
-        managedConnection.commitLocalTransaction( connectionHandle );
+    public void commit() throws ResourceException {
+        LOG.entering("CuckooCciLocalTransaction", "commit()");
+        managedConnection.commitLocalTransaction(connectionHandle);
     }
 
-    public void rollback() throws ResourceException
-    {
-        LOG.entering( "CuckooCciLocalTransaction", "rollback()" );
-        managedConnection.rollbackLocalTransaction( connectionHandle );
+    public void rollback() throws ResourceException {
+        LOG.entering("CuckooCciLocalTransaction", "rollback()");
+        managedConnection.rollbackLocalTransaction(connectionHandle);
     }
 }

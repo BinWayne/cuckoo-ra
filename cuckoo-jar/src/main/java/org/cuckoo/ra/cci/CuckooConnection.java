@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,9 +18,7 @@
  */
 package org.cuckoo.ra.cci;
 
-import org.cuckoo.ra.common.CuckooConnectionMetaData;
-import org.cuckoo.ra.spi.CuckooManagedConnection;
-
+import java.util.logging.Logger;
 import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
@@ -29,12 +27,12 @@ import javax.resource.cci.LocalTransaction;
 import javax.resource.cci.MappedRecord;
 import javax.resource.cci.Record;
 import javax.resource.cci.ResultSetInfo;
-import java.util.logging.Logger;
+import org.cuckoo.ra.common.CuckooConnectionMetaData;
+import org.cuckoo.ra.spi.CuckooManagedConnection;
 
+public class CuckooConnection implements Connection {
 
-public class CuckooConnection implements Connection
-{
-    private static final Logger LOG = Logger.getLogger( CuckooConnection.class.getName() );
+    private static final Logger LOG = Logger.getLogger(CuckooConnection.class.getName());
 
     private CuckooManagedConnection managedConnection;
 
@@ -42,9 +40,8 @@ public class CuckooConnection implements Connection
 
     private boolean closed = false;
 
-    public CuckooConnection( CuckooManagedConnection managedConnection )
-    {
-        LOG.entering( "CuckooConnection", "CuckooConnection()" );
+    public CuckooConnection(CuckooManagedConnection managedConnection) {
+        LOG.entering("CuckooConnection", "CuckooConnection()");
         this.managedConnection = managedConnection;
     }
 
@@ -53,16 +50,14 @@ public class CuckooConnection implements Connection
      *
      * @throws ResourceException Exception thrown if close on a connection handle fails.
      */
-    public void close() throws ResourceException
-    {
-        LOG.entering( "CuckooConnection", "close()" );
+    public void close() throws ResourceException {
+        LOG.entering("CuckooConnection", "close()");
 
-        if ( closed )
-        {
-            throw new ResourceException( "Connection has already been closed" );
+        if (closed) {
+            throw new ResourceException("Connection has already been closed");
         }
 
-        managedConnection.notifyConnectionClosed( this );
+        managedConnection.notifyConnectionClosed(this);
         closed = true;
     }
 
@@ -72,11 +67,10 @@ public class CuckooConnection implements Connection
      * @return Interaction instance
      * @throws ResourceException Failed to create an Interaction
      */
-    public Interaction createInteraction() throws ResourceException
-    {
-        LOG.entering( "CuckooConnection", "createInteraction()" );
+    public Interaction createInteraction() throws ResourceException {
+        LOG.entering("CuckooConnection", "createInteraction()");
         checkIfValid();
-        return new CuckooInteraction( this );
+        return new CuckooInteraction(this);
     }
 
     /**
@@ -85,14 +79,12 @@ public class CuckooConnection implements Connection
      *
      * @return LocalTransaction instance
      * @throws ResourceException Failed to return a LocalTransaction
-     * @throws javax.resource.NotSupportedException
-     *                           Demarcation of Resource manager
+     * @throws javax.resource.NotSupportedException Demarcation of Resource manager
      */
-    public LocalTransaction getLocalTransaction() throws ResourceException
-    {
-        LOG.entering( "CuckooConnection", "getLocalTransaction()" );
+    public LocalTransaction getLocalTransaction() throws ResourceException {
+        LOG.entering("CuckooConnection", "getLocalTransaction()");
         checkIfValid();
-        return new CuckooCciLocalTransaction( managedConnection, this );
+        return new CuckooCciLocalTransaction(managedConnection, this);
     }
 
     /**
@@ -101,9 +93,8 @@ public class CuckooConnection implements Connection
      * @return ConnectionMetaData instance representing information about the EIS instance
      * @throws ResourceException Failed to get information about the connected EIS instance.
      */
-    public CuckooConnectionMetaData getMetaData() throws ResourceException
-    {
-        LOG.entering( "CuckooConnection", "getMetaData()" );
+    public CuckooConnectionMetaData getMetaData() throws ResourceException {
+        LOG.entering("CuckooConnection", "getMetaData()");
         checkIfValid();
         return managedConnection.getMetaData();
     }
@@ -114,44 +105,36 @@ public class CuckooConnection implements Connection
      *
      * @return ResultSetInfo instance
      * @throws ResourceException Failed to get ResultSet related information
-     * @throws javax.resource.NotSupportedException
-     *                           ResultSet functionality is not supported
+     * @throws javax.resource.NotSupportedException ResultSet functionality is not supported
      */
-    public ResultSetInfo getResultSetInfo() throws ResourceException
-    {
-        LOG.entering( "CuckooConnection", "getResultSetInfo()" );
-        throw new NotSupportedException( "ResultSetInfo not supported" );
+    public ResultSetInfo getResultSetInfo() throws ResourceException {
+        LOG.entering("CuckooConnection", "getResultSetInfo()");
+        throw new NotSupportedException("ResultSetInfo not supported");
     }
 
+    public void associateManagedConnection(CuckooManagedConnection managedConnection) throws ResourceException {
+        LOG.entering("CuckooConnection", "associateManagedConnection()");
 
-    public void associateManagedConnection( CuckooManagedConnection managedConnection ) throws ResourceException
-    {
-        LOG.entering( "CuckooConnection", "associateManagedConnection()" );
-
-        this.managedConnection.disassociateConnection( this );
+        this.managedConnection.disassociateConnection(this);
         this.managedConnection = managedConnection;
     }
 
-    public void invalidate()
-    {
-        LOG.entering( "CuckooConnection", "invalidate()" );
+    public void invalidate() {
+        LOG.entering("CuckooConnection", "invalidate()");
 
         invalidated = true;
     }
 
-    private void checkIfValid() throws ResourceException
-    {
-        if ( invalidated )
-        {
-            throw new ResourceException( "Connection handler has already been invalidated" );
+    private void checkIfValid() throws ResourceException {
+        if (invalidated) {
+            throw new ResourceException("Connection handler has already been invalidated");
         }
     }
 
-    MappedRecord executeFunction( String functionName, Record input ) throws ResourceException
-    {
-        LOG.entering( "CuckooConnection", "executeFunction()" );
+    MappedRecord executeFunction(String functionName, Record input) throws ResourceException {
+        LOG.entering("CuckooConnection", "executeFunction()");
 
         checkIfValid();
-        return managedConnection.executeFunction( functionName, input );
+        return managedConnection.executeFunction(functionName, input);
     }
 }

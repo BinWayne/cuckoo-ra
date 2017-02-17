@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,14 +18,13 @@
  */
 package org.cuckoo.ra.cci;
 
+import java.util.logging.Logger;
+import javax.resource.cci.ResourceAdapterMetaData;
 import org.cuckoo.ra.util.RaXmlReader;
 
-import javax.resource.cci.ResourceAdapterMetaData;
-import java.util.logging.Logger;
+public class CuckooRaMetaData implements ResourceAdapterMetaData {
 
-public class CuckooRaMetaData implements ResourceAdapterMetaData
-{
-    private static final Logger LOG = Logger.getLogger( CuckooRaMetaData.class.getName() );
+    private static final Logger LOG = Logger.getLogger(CuckooRaMetaData.class.getName());
 
     private static final String RA_XML_FILE = "/META-INF/ra.xml";
 
@@ -35,11 +34,10 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
     private final String adapterShortDescription;
     private final String specVersion;
 
-    public CuckooRaMetaData()
-    {
-        LOG.entering( "CuckooRaMetaData", "CuckooRaMetaData()" );
+    public CuckooRaMetaData() {
+        LOG.entering("CuckooRaMetaData", "CuckooRaMetaData()");
 
-        RaXmlReader xmlReader = new RaXmlReader( RA_XML_FILE );
+        RaXmlReader xmlReader = new RaXmlReader(RA_XML_FILE);
         adapterVersion = xmlReader.getResourceAdapterVersion();
         adapterVendorName = xmlReader.getVendorName();
         adapterName = xmlReader.getDisplayName();
@@ -52,8 +50,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return String representing version of the resource adapter
      */
-    public String getAdapterVersion()
-    {
+    public String getAdapterVersion() {
         return adapterVersion;
     }
 
@@ -62,8 +59,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return String representing name of the vendor
      */
-    public String getAdapterVendorName()
-    {
+    public String getAdapterVendorName() {
         return adapterVendorName;
     }
 
@@ -72,8 +68,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return String representing the name of the resource adapter
      */
-    public String getAdapterName()
-    {
+    public String getAdapterName() {
         return adapterName;
     }
 
@@ -82,8 +77,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return String describing the resource adapter
      */
-    public String getAdapterShortDescription()
-    {
+    public String getAdapterShortDescription() {
         return adapterShortDescription;
     }
 
@@ -92,8 +86,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return String representing the supported version of the connector architecture
      */
-    public String getSpecVersion()
-    {
+    public String getSpecVersion() {
         return specVersion;
     }
 
@@ -102,8 +95,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return Array of fully-qualified class names of InteractionSpec classes
      */
-    public String[] getInteractionSpecsSupported()
-    {
+    public String[] getInteractionSpecsSupported() {
         return new String[]{CuckooInteractionSpec.class.getName()};
     }
 
@@ -112,8 +104,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return boolean depending on method support
      */
-    public boolean supportsExecuteWithInputAndOutputRecord()
-    {
+    public boolean supportsExecuteWithInputAndOutputRecord() {
         return false;
     }
 
@@ -122,8 +113,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return boolean depending on method support
      */
-    public boolean supportsExecuteWithInputRecordOnly()
-    {
+    public boolean supportsExecuteWithInputRecordOnly() {
         return true;
     }
 
@@ -132,8 +122,7 @@ public class CuckooRaMetaData implements ResourceAdapterMetaData
      *
      * @return true if resource adapter supports resource manager local transaction demarcation
      */
-    public boolean supportsLocalTransactionDemarcation()
-    {
+    public boolean supportsLocalTransactionDemarcation() {
         return true;
     }
 }

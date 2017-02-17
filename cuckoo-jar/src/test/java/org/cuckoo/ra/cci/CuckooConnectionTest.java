@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,46 +18,39 @@
  */
 package org.cuckoo.ra.cci;
 
+import javax.resource.ResourceException;
+import org.assertj.core.api.Assertions;
 import org.cuckoo.ra.spi.CuckooManagedConnection;
 import org.easymock.EasyMock;
 import org.junit.Test;
-
-import javax.resource.ResourceException;
-
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.fest.assertions.Fail.fail;
 
-public class CuckooConnectionTest
-{
-    private final CuckooManagedConnection managedConnection = createNiceMock( CuckooManagedConnection.class );
+public class CuckooConnectionTest {
 
-    private final CuckooConnection connection = new CuckooConnection( managedConnection );
+    private final CuckooManagedConnection managedConnection = createNiceMock(CuckooManagedConnection.class);
+
+    private final CuckooConnection connection = new CuckooConnection(managedConnection);
 
     @Test
-    public void closeNotifiesManagedConnection() throws Exception
-    {
-        managedConnection.notifyConnectionClosed( EasyMock.<CuckooConnection>anyObject() );
-        replay( managedConnection );
+    public void closeNotifiesManagedConnection() throws Exception {
+        managedConnection.notifyConnectionClosed(EasyMock.<CuckooConnection>anyObject());
+        replay(managedConnection);
 
         connection.close();
 
-        verify( managedConnection );
+        verify(managedConnection);
     }
 
     @Test
-    public void closeThrowsResourceExceptionWhenConnectionIsAlreadyClosed() throws ResourceException
-    {
+    public void closeThrowsResourceExceptionWhenConnectionIsAlreadyClosed() throws ResourceException {
         connection.close();
 
-        try
-        {
+        try {
             connection.close();
-            fail();
-        }
-        catch ( ResourceException e )
-        {
+            Assertions.fail("should throw exception");
+        } catch (ResourceException e) {
             // expected
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -28,33 +28,31 @@ import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-public class ArquillianHelper
-{
+public class ArquillianHelper {
+
     private static final String DEPLOYMENT_NAME = "CuckooTestRA";
 
-    public static EnterpriseArchive createEar( JavaArchive testJar, final String datasourceName )
-    {
+    public static EnterpriseArchive createEar(JavaArchive testJar, final String datasourceName) {
         // must be test.ear, otherwise Arquillian does not guess the correct JNDI-name for the EJBs
-        EnterpriseArchive ear = ShrinkWrap.create( EnterpriseArchive.class, "test.ear" );
+        EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "test.ear");
 //        ear.addAsModule( ArquillianHelper.class.getResource( datasourceName ), "cuckoo-jboss-ds.xml" );
 //        ear.addAsApplicationResource( "jboss5/jboss-app.xml", "jboss-app.xml" );
-        ear.addAsModule( testJar );
-        ear.addAsManifestResource( ArquillianHelper.class.getResource( "/META-INF/MyMANIFEST.MF" ), "MANIFEST.MF" );
+        ear.addAsModule(testJar);
+        ear.addAsManifestResource(ArquillianHelper.class.getResource("/META-INF/MyMANIFEST.MF"), "MANIFEST.MF");
 
         return ear;
     }
 
-    public static ResourceAdapterArchive createRar()
-    {
-        JavaArchive jar = ShrinkWrap.create( JavaArchive.class, DEPLOYMENT_NAME + ".jar" );
-        jar.addPackages( false, CuckooResourceAdapter.class.getPackage(), CuckooConnection.class.getPackage(),
+    public static ResourceAdapterArchive createRar() {
+        JavaArchive jar = ShrinkWrap.create(JavaArchive.class, DEPLOYMENT_NAME + ".jar");
+        jar.addPackages(false, CuckooResourceAdapter.class.getPackage(), CuckooConnection.class.getPackage(),
                 ForwardingList.class.getPackage(), CuckooDestinationDataProvider.class.getPackage(),
-                CuckooConnectionMetaData.class.getPackage() );
+                CuckooConnectionMetaData.class.getPackage());
 
         ResourceAdapterArchive rar =
-                ShrinkWrap.create( ResourceAdapterArchive.class, DEPLOYMENT_NAME + ".rar" );
-        rar.addAsLibrary( jar );
-        rar.addAsManifestResource( ArquillianHelper.class.getResource( "/META-INF/ra.xml" ), "ra.xml" );
+                ShrinkWrap.create(ResourceAdapterArchive.class, DEPLOYMENT_NAME + ".rar");
+        rar.addAsLibrary(jar);
+        rar.addAsManifestResource(ArquillianHelper.class.getResource("/META-INF/ra.xml"), "ra.xml");
         return rar;
     }
 }
