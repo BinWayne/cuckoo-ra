@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 akquinet tech@spree GmbH
+ * Copyright (C) 2010 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,150 +18,185 @@
  */
 package org.cuckoo.ra.jco;
 
+import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.resource.cci.IndexedRecord;
+import javax.resource.cci.MappedRecord;
+
+import org.cuckoo.ra.cci.CuckooIndexedRecord;
+import org.cuckoo.ra.cci.CuckooMappedRecord;
+
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoMetaData;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoRecord;
 import com.sap.conn.jco.JCoStructure;
 import com.sap.conn.jco.JCoTable;
-import java.util.Map;
-import javax.resource.cci.IndexedRecord;
-import javax.resource.cci.MappedRecord;
-import javax.resource.cci.Record;
-import org.cuckoo.ra.cci.CuckooIndexedRecord;
-import org.cuckoo.ra.cci.CuckooMappedRecord;
 
 public class JCoRecordMapper {
+	private static final Logger LOG = Logger.getLogger(JCoRecordMapper.class.getName());
 
-    public void populateImportRecord(final JCoParameterList importList,
-                                     final JCoParameterList tableList, final MappedRecord mapRecord) {
-        for (Object o : mapRecord.entrySet()) {
-            final Map.Entry mapEntry = (Map.Entry) o;
-            final Object key = mapEntry.getKey();
-            final Object value = mapEntry.getValue();
+	public void populateInputParameters(JCoFunction function, MappedRecord inputRecord) {
+		final JCoParameterList importList = function.getImportParameterList();
+		final JCoParameterList changingList = function.getChangingParameterList();
+		final JCoParameterList tableList = function.getTableParameterList();
 
-            if (key instanceof String) {
-                final String fieldName = (String) key;
+		if (importList != null) {
+			populateImportRecord(importList, inputRecord);
+		}
 
-                if (value instanceof MappedRecord) {
-                    // Import parameters
-                    populateStructure(importList.getStructure(fieldName), (MappedRecord) value);
-                } else if (value instanceof IndexedRecord) {
-                    // Might be a table parameter or an input parameter with a table type.
-                    JCoTable table = null;
-                    // First check if a table parameter of this name exists
-                    if (tableList != null) {
-                        table = tableList.getTable(fieldName);
-                    }
-                    // No table parameter, look for an import parameter
-                    if (table == null) {
-                        table = importList.getTable(fieldName);
-                    }
-                    // No parameter of this name found at all
-                    if (table == null) {
-                        throw new IllegalArgumentException("No table or input parameter found for field name " + fieldName);
-                    }
-                    // Now populate the found table
-                    populateTable(table, (IndexedRecord) value);
-                } else {
-                    populateRecord(importList, fieldName, value);
-                }
-            } else if (key instanceof Integer) {
-                final int fieldId = (Integer) key;
+		if (changingList != null) {
+			populateImportRecord(changingList, inputRecord);
+		}
 
-                if (value instanceof MappedRecord) {
-                    populateStructure(importList.getStructure(fieldId), (MappedRecord) value);
-                } else if (value instanceof IndexedRecord) {
-                    populateTable(importList.getTable(fieldId), (IndexedRecord) value);
-                } else {
-                    populateRecord(importList, fieldId, value);
-                }
-            }
-        }
-    }
+		if (tableList != null) {
+			populateImportRecord(tableList, inputRecord);
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    private void populateIndexedRecord(final IndexedRecord indexedRecord, final JCoTable table) {
-        for (int i = 0; i < table.getNumRows(); i++) {
-            final MappedRecord mappedRecord = new CuckooMappedRecord(indexedRecord.getRecordName() + ":row:" + i);
-            // Each component of the table might itself be a table, structure or simple value.
-            // Luckily, we can reuse populateMappedRecord recursively - a table is also a record.
-            populateMappedRecord(mappedRecord, table);
+	private void populateImportRecord(final JCoParameterList importList, final MappedRecord mapRecord) {
+		if (importList != null) {
+			JCoMetaData metaData = importList.getMetaData();
+			for (Object o : mapRecord.entrySet()) {
+				final Map.Entry mapEntry = (Map.Entry) o;
+				final Object key = mapEntry.getKey();
+				final Object value = mapEntry.getValue();
 
-            indexedRecord.add(mappedRecord);
-            table.nextRow();
-        }
-    }
+				if (key instanceof String) {
+					final String fieldName = (String) key;
 
-    @SuppressWarnings("unchecked")
-    private void populateMappedRecord(final MappedRecord mappedResultRecord, final JCoRecord record) {
-        for (int i = 0; i < record.getFieldCount(); i++) {
-            final JCoMetaData metaData = record.getMetaData();
-            final String fieldName = metaData.getName(i);
+					if (metaData.hasField(fieldName)) {
+						if (value instanceof MappedRecord) {
+							// Structure parameter
+							populateStructure(importList.getStructure(fieldName), (MappedRecord) value);
+						} else if (value instanceof IndexedRecord) {
+							// Table parameter
+							populateTable(importList.getTable(fieldName), (IndexedRecord) value);
+						} else {
+							// Simple parameter
+							populateRecord(importList, fieldName, value);
+						}
+					}
+				}
+			}
+		}
+	}
 
-            if (metaData.isStructure(i)) {
-                final MappedRecord nestedMappedRecord = new CuckooMappedRecord(fieldName);
-                populateMappedRecord(nestedMappedRecord, record.getStructure(i));
-                mappedResultRecord.put(fieldName, nestedMappedRecord);
-            } else if (metaData.isTable(i)) {
-                final IndexedRecord nestedIndexedRecord = new CuckooIndexedRecord(fieldName);
-                populateIndexedRecord(nestedIndexedRecord, record.getTable(i));
-                mappedResultRecord.put(fieldName, nestedIndexedRecord);
-            } else {
-                mappedResultRecord.put(fieldName, record.getValue(i));
-            }
-        }
-    }
+	@SuppressWarnings("unchecked")
+	private void populateIndexedRecord(final IndexedRecord indexedRecord, final JCoTable table) {
+		final JCoMetaData metaData = table.getMetaData();
+		for (int i = 0; i < table.getNumRows(); i++) {
 
-    public void populateTable(final JCoTable table, final IndexedRecord indexRecord) {
-        for (final Object object : indexRecord) {
-            if (object instanceof MappedRecord) {
-                table.appendRow();
-                populateTableRow(table, (MappedRecord) object);
-            } else {
-                throw new IllegalArgumentException(
-                        "Only MappedRecords are expected to be inside the indexRecord");
-            }
-        }
-    }
+			final MappedRecord mappedRecord = new CuckooMappedRecord(indexedRecord.getRecordName() + ":row:" + i);
 
-    private void populateTableRow(final JCoTable table, final MappedRecord mapRecord) {
-        for (final Object object : mapRecord.entrySet()) {
-            final Map.Entry mapEntry = (Map.Entry) object;
-            populateRecord(table, mapEntry.getKey(), mapEntry.getValue());
-        }
-    }
+			for (int j = 0; j < table.getNumColumns(); j++) {
+				final String fieldName = metaData.getName(j);
 
-    @SuppressWarnings("unchecked")
-    private void populateStructure(final JCoStructure structure, final MappedRecord mapRecord) {
-        for (final Object object : mapRecord.entrySet()) {
-            final Map.Entry mapEntry = (Map.Entry) object;
-            populateRecord(structure, mapEntry.getKey(), mapEntry.getValue());
-        }
-    }
+				if (metaData.isStructure(j)) {
+					final MappedRecord nestedMappedRecord = new CuckooMappedRecord(fieldName);
+					populateMappedRecord(nestedMappedRecord, table.getStructure(j));
+					mappedRecord.put(fieldName, nestedMappedRecord);
+				} else if (metaData.isTable(j)) {
+					final IndexedRecord nestedIndexedRecord = new CuckooIndexedRecord(fieldName);
+					populateIndexedRecord(nestedIndexedRecord, table.getTable(j));
+					mappedRecord.put(fieldName, nestedIndexedRecord);
+				} else {
+					mappedRecord.put(table.getMetaData().getName(j), table.getValue(j));
+				}
+			}
 
-    private void populateRecord(final JCoRecord jcoRecord, final Object fieldName,
-                                final Object fieldValue) {
-        if (fieldName instanceof String) {
-            jcoRecord.setValue((String) fieldName, fieldValue);
-        } else if (fieldName instanceof Integer) {
-            jcoRecord.setValue((Integer) fieldName, fieldValue);
-        }
-    }
+			indexedRecord.add(mappedRecord);
+			table.nextRow();
+		}
+	}
 
-    public void convertExportTable(final JCoFunction function, final Record resultRecord) {
-        final JCoParameterList exportTableList = function.getTableParameterList();
+	@SuppressWarnings("unchecked")
+	private void populateMappedRecord(final MappedRecord mappedResultRecord, final JCoRecord record) {
+		for (int i = 0; i < record.getFieldCount(); i++) {
+			final JCoMetaData metaData = record.getMetaData();
+			final String fieldName = metaData.getName(i);
 
-        if (exportTableList != null) {
-            populateMappedRecord((MappedRecord) resultRecord, exportTableList);
-        }
-    }
+			if (metaData.isStructure(i)) {
+				final MappedRecord nestedMappedRecord = new CuckooMappedRecord(fieldName);
+				populateMappedRecord(nestedMappedRecord, record.getStructure(i));
+				mappedResultRecord.put(fieldName, nestedMappedRecord);
+			} else if (metaData.isTable(i)) {
+				final IndexedRecord nestedIndexedRecord = new CuckooIndexedRecord(fieldName);
+				populateIndexedRecord(nestedIndexedRecord, record.getTable(i));
+				mappedResultRecord.put(fieldName, nestedIndexedRecord);
+			} else {
+				mappedResultRecord.put(fieldName, record.getValue(i));
+			}
+		}
+	}
 
-    public void convertExportParameters(final JCoFunction function, final MappedRecord resultRecord) {
-        final JCoParameterList exportList = function.getExportParameterList();
+	private void populateTable(final JCoTable table, final IndexedRecord indexRecord) {
+		for (final Object object : indexRecord) {
+			if (object instanceof MappedRecord) {
+				table.appendRow();
+				populateTableRow(table, (MappedRecord) object);
+			} else {
+				throw new IllegalArgumentException("Only MappedRecords are expected to be inside the indexRecord");
+			}
+		}
+	}
 
-        if (exportList != null) {
-            populateMappedRecord(resultRecord, exportList);
-        }
-    }
+	private void populateTableRow(final JCoTable table, final MappedRecord mapRecord) {
+		for (final Object object : mapRecord.entrySet()) {
+			final Map.Entry mapEntry = (Map.Entry) object;
+			populateRecord(table, mapEntry.getKey(), mapEntry.getValue());
+		}
+	}
+
+	private void populateStructure(final JCoStructure structure, final MappedRecord mapRecord) {
+		JCoMetaData metaData = structure.getMetaData();
+		for (final Object object : mapRecord.entrySet()) {
+			final Map.Entry mapEntry = (Map.Entry) object;
+			final Object key = mapEntry.getKey();
+			final Object value = mapEntry.getValue();
+
+			if (key instanceof String) {
+				final String fieldName = (String) key;
+
+				if (metaData.hasField(fieldName)) {
+					if (value instanceof MappedRecord) {
+						// Structure
+						populateStructure(structure.getStructure(fieldName), (MappedRecord) value);
+					} else if (value instanceof IndexedRecord) {
+						// Tables
+						populateTable(structure.getTable(fieldName), (IndexedRecord) value);
+					} else {
+						// Simple
+						populateRecord(structure, key, value);
+					}
+				}
+			}
+		}
+	}
+
+	private void populateRecord(final JCoRecord jcoRecord, final Object fieldName, final Object fieldValue) {
+		JCoMetaData metaData = jcoRecord.getMetaData();
+		if (fieldValue != null && metaData.hasField((String) fieldName)) {
+			jcoRecord.setValue((String) fieldName, fieldValue);
+		}
+	}
+
+	public void convertExportParameters(final JCoFunction function, final MappedRecord resultRecord) {
+		final JCoParameterList exportList = function.getExportParameterList();
+		final JCoParameterList changingList = function.getChangingParameterList();
+		final JCoParameterList exportTableList = function.getTableParameterList();
+
+		if (exportList != null) {
+			populateMappedRecord(resultRecord, exportList);
+		}
+
+		if (changingList != null) {
+			populateMappedRecord(resultRecord, changingList);
+		}
+
+		if (exportTableList != null) {
+			populateMappedRecord(resultRecord, exportTableList);
+		}
+	}
 }
