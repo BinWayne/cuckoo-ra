@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,6 +18,19 @@
  */
 package org.cuckoo.ra.it.security;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import javax.ejb.EJB;
+import javax.resource.ResourceException;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 import org.cuckoo.ra.cci.ApplicationProperties;
 import org.cuckoo.ra.cci.ApplicationPropertiesImpl;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -29,21 +42,6 @@ import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.ejb.EJB;
-import javax.resource.ResourceException;
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import static org.cuckoo.ra.it.util.ArquillianHelper.createEar;
 import static org.cuckoo.ra.it.util.ArquillianHelper.createRar;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -51,112 +49,95 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-@RunWith( Arquillian.class )
-public class ContainerManagedSecurityTest
-{
+@RunWith(Arquillian.class)
+public class ContainerManagedSecurityTest {
+
     @EJB
     private SecurityTestEjb ejb;
 
-    @Deployment( order = 1, testable = false )
-    public static Archive createRarDeployment()
-    {
+    @Deployment(order = 1, testable = false)
+    public static Archive createRarDeployment() {
         return createRar();
     }
 
-    @Deployment( name = "ear", order = 2 )
-    public static EnterpriseArchive createDeployment()
-    {
-        final JavaArchive testJar = ShrinkWrap.create( JavaArchive.class, "rartest.jar" )
+    @Deployment(name = "ear", order = 2)
+    public static EnterpriseArchive createDeployment() {
+        final JavaArchive testJar = ShrinkWrap.create(JavaArchive.class, "rartest.jar")
                 .addClasses(
                         SecurityTestEjb.class, SecurityTestEjbBean.class,
                         ContainerManagedSecurityTest.class
                 );
         testJar.addAsManifestResource(
-                ContainerManagedSecurityTest.class.getResource( "/jboss5/cuckoo-jboss-beans.xml" ),
-                "cuckoo-jboss-beans.xml" );
+                ContainerManagedSecurityTest.class.getResource("/jboss5/cuckoo-jboss-beans.xml"),
+                "cuckoo-jboss-beans.xml");
 
-        return createEar( testJar, "/jboss5/cuckoo-secure-jboss-ds.xml" );
+        return createEar(testJar, "/jboss5/cuckoo-secure-jboss-ds.xml");
     }
 
     @Test
-    @OperateOnDeployment( "ear" )
-    public void callsSapWithCredentialsOfLoggedInUser() throws Exception
-    {
-        LoginContext loginContext = login( "SAPUSER2" );
+    @OperateOnDeployment("ear")
+    public void callsSapWithCredentialsOfLoggedInUser() throws Exception {
+        LoginContext loginContext = login("SAPUSER2");
         String username = ejb.callFunctionAndReturnEisUser();
         loginContext.logout();
 
-        assertThat( username, equalTo( "SAPUSER2" ) );
+        assertThat(username, equalTo("SAPUSER2"));
     }
 
     @Test
-    @OperateOnDeployment( "ear" )
-    public void throwsSecurityExceptionWhenCallingSapWithWrongCredentials() throws LoginException, ResourceException
-    {
-        LoginContext loginContext = login( "SAPUSER3" );
-        try
-        {
+    @OperateOnDeployment("ear")
+    public void throwsSecurityExceptionWhenCallingSapWithWrongCredentials() throws LoginException, ResourceException {
+        LoginContext loginContext = login("SAPUSER3");
+        try {
             ejb.callFunctionAndReturnEisUser();
-            fail( "Expected to throw Exception" );
-        }
-        catch ( ResourceException e )
-        {
-            assertHasSecurityExceptionInStacktrace( e );
-        }
-        finally
-        {
+            fail("Expected to throw Exception");
+        } catch (ResourceException e) {
+            assertHasSecurityExceptionInStacktrace(e);
+        } finally {
             loginContext.logout();
         }
     }
 
     @Test
-    @OperateOnDeployment( "ear" )
-    public void overwritesApplicationProvidedPropertiesWithSubjectProperties() throws Exception
-    {
-        ApplicationProperties properties = new ApplicationPropertiesImpl( "NON_EXISTING_USER", "A_PASSWORD" );
-        LoginContext loginContext = login( "SAPUSER2" );
-        String username = ejb.callFunctionWithCustomPropertiesAndReturnEisUser( properties );
+    @OperateOnDeployment("ear")
+    public void overwritesApplicationProvidedPropertiesWithSubjectProperties() throws Exception {
+        ApplicationProperties properties = new ApplicationPropertiesImpl("NON_EXISTING_USER", "A_PASSWORD");
+        LoginContext loginContext = login("SAPUSER2");
+        String username = ejb.callFunctionWithCustomPropertiesAndReturnEisUser(properties);
         loginContext.logout();
 
-        assertThat( username, equalTo( "SAPUSER2" ) );
+        assertThat(username, equalTo("SAPUSER2"));
     }
 
-    private void assertHasSecurityExceptionInStacktrace( Throwable e )
-    {
+    private void assertHasSecurityExceptionInStacktrace(Throwable e) {
         StringWriter stringWriter = new StringWriter();
-        e.printStackTrace( new PrintWriter( stringWriter ) );
+        e.printStackTrace(new PrintWriter(stringWriter));
         String stacktrace = stringWriter.toString();
-        assertTrue( stacktrace.contains( javax.resource.spi.SecurityException.class.getName() ) );
+        assertTrue(stacktrace.contains(javax.resource.spi.SecurityException.class.getName()));
     }
 
-    private LoginContext login( final String username ) throws LoginException
-    {
-        LoginContext loginContext = new LoginContext( "ejb-test", new Subject(),
-                new TestCallbackHandler( username ) );
+    private LoginContext login(final String username) throws LoginException {
+        LoginContext loginContext = new LoginContext("ejb-test", new Subject(),
+                new TestCallbackHandler(username));
         loginContext.login();
         return loginContext;
     }
 
-    private static class TestCallbackHandler implements CallbackHandler
-    {
+    private static class TestCallbackHandler implements CallbackHandler {
+
         private final String username;
 
-        private TestCallbackHandler( String username )
-        {
+        private TestCallbackHandler(String username) {
             this.username = username;
         }
 
-        public void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
-        {
-            for ( Callback callback : callbacks )
-            {
-                if ( callback instanceof NameCallback )
-                {
-                    ( ( NameCallback ) callback ).setName( username );
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            for (Callback callback : callbacks) {
+                if (callback instanceof NameCallback) {
+                    ((NameCallback) callback).setName(username);
                 }
-                if ( callback instanceof PasswordCallback )
-                {
-                    ( ( PasswordCallback ) callback ).setPassword( "password".toCharArray() );
+                if (callback instanceof PasswordCallback) {
+                    ((PasswordCallback) callback).setPassword("password".toCharArray());
                 }
             }
         }

@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <connection-factories>
 
-	<!-- 
-		a sample connection, if you need another copy the tx-connection-factory 
-		and change the corresponding parameter 
-	-->
-	<tx-connection-factory>
-		<!-- change the JNDI name of the connection, if required -->
-		<jndi-name>eis/sap/A12</jndi-name>
-		<rar-name>CuckooTestRA.rar</rar-name>
+  <!--
+    a sample connection, if you need another copy the tx-connection-factory
+    and change the corresponding parameter
+  -->
+  <tx-connection-factory>
+    <!-- change the JNDI name of the connection, if required -->
+    <jndi-name>eis/sap/A12</jndi-name>
+    <rar-name>CuckooTestRA.rar</rar-name>
 
-		<connection-definition>javax.resource.cci.ConnectionFactory</connection-definition>
+    <connection-definition>javax.resource.cci.ConnectionFactory</connection-definition>
 
-        <config-property name="destinationName" type="java.lang.String">A12</config-property>
-        <config-property name="jcoApplicationServerHost" type="java.lang.String">192.168.146.129</config-property>
-        <config-property name="jcoSystemNumber" type="java.lang.String">00</config-property>
-        <config-property name="jcoClient" type="java.lang.String">001</config-property>
-        <config-property name="jcoUser" type="java.lang.String">SAPUSER</config-property>
-        <config-property name="jcoPassword" type="java.lang.String">password</config-property>
+    <config-property name="destinationName" type="java.lang.String">A12</config-property>
+    <config-property name="jcoApplicationServerHost" type="java.lang.String">192.168.146.129</config-property>
+    <config-property name="jcoSystemNumber" type="java.lang.String">00</config-property>
+    <config-property name="jcoClient" type="java.lang.String">001</config-property>
+    <config-property name="jcoUser" type="java.lang.String">SAPUSER</config-property>
+    <config-property name="jcoPassword" type="java.lang.String">password</config-property>
 
-        <security-domain>ejb-test</security-domain>
+    <security-domain>ejb-test</security-domain>
 
-		<local-transaction />
-		<max-pool-size>5</max-pool-size>
-        <blocking-timeout-millis>5000</blocking-timeout-millis>
-	</tx-connection-factory>
+    <local-transaction/>
+    <max-pool-size>5</max-pool-size>
+    <blocking-timeout-millis>5000</blocking-timeout-millis>
+  </tx-connection-factory>
 </connection-factories>

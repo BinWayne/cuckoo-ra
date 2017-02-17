@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -31,14 +31,15 @@ import javax.resource.cci.ConnectionFactory;
  * to a ConnectionFactory instance, or looks it up from JNDI namespace.
  * The instance can then be used to get EIS connections.
  * <p/>
+ *
  * @see javax.resource.cci.ConnectionFactory
  * @see javax.resource.cci.Connection
  * @see javax.resource.cci.RecordFactory
  * @see javax.resource.cci.ConnectionMetaData
  * @see ApplicationProperties
  */
-public interface CuckooConnectionFactory extends ConnectionFactory
-{
+public interface CuckooConnectionFactory extends ConnectionFactory {
+
     /**
      * Creates a new ApplicationProperties instance that may be used by an application
      * component to provide connection specific information (e.g. a user and password)

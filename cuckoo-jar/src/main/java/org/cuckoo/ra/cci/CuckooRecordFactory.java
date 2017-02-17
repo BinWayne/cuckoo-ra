@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,28 +18,25 @@
  */
 package org.cuckoo.ra.cci;
 
+import java.util.logging.Logger;
 import javax.resource.ResourceException;
 import javax.resource.cci.IndexedRecord;
 import javax.resource.cci.MappedRecord;
 import javax.resource.cci.RecordFactory;
-import java.util.logging.Logger;
 
-public class CuckooRecordFactory implements RecordFactory
-{
-    private static final Logger LOG = Logger.getLogger( CuckooRecordFactory.class.getName() );
+public class CuckooRecordFactory implements RecordFactory {
 
-    public CuckooRecordFactory()
-    {
-        LOG.entering( "CuckooRecordFactory", "CuckooRecordFactory()" );
+    private static final Logger LOG = Logger.getLogger(CuckooRecordFactory.class.getName());
+
+    public CuckooRecordFactory() {
+        LOG.entering("CuckooRecordFactory", "CuckooRecordFactory()");
     }
 
-    public MappedRecord createMappedRecord( String recordName ) throws ResourceException
-    {
-        return new CuckooMappedRecord( recordName );
+    public MappedRecord createMappedRecord(String recordName) throws ResourceException {
+        return new CuckooMappedRecord(recordName);
     }
 
-    public IndexedRecord createIndexedRecord( String recordName ) throws ResourceException
-    {
-        return new CuckooIndexedRecord( recordName );
+    public IndexedRecord createIndexedRecord(String recordName) throws ResourceException {
+        return new CuckooIndexedRecord(recordName);
     }
 }

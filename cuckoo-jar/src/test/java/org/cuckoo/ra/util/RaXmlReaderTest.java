@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -20,90 +20,66 @@ package org.cuckoo.ra.util;
 
 import org.cuckoo.ra.CuckooException;
 import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 
-import java.util.TreeSet;
+public class RaXmlReaderTest {
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.fest.assertions.Fail.fail;
-
-public class RaXmlReaderTest
-{
-    private static final RaXmlReader xmlReader = new RaXmlReader( "/META-INF/ra.xml" );
+    private static final RaXmlReader xmlReader = new RaXmlReader("/META-INF/ra.xml");
 
     @Test
-    public void readsDescription() throws Exception
-    {
-        assertThat( xmlReader.getDescription() ).isEqualTo( "Description" );
+    public void readsDescription() throws Exception {
+        assertThat(xmlReader.getDescription()).isEqualTo("Description");
     }
 
     @Test
-    public void readsDisplayName() throws Exception
-    {
-        assertThat( xmlReader.getDisplayName() ).isEqualTo( "Display Name" );
+    public void readsDisplayName() throws Exception {
+        assertThat(xmlReader.getDisplayName()).isEqualTo("Display Name");
     }
 
     @Test
-    public void readsEisType() throws Exception
-    {
-        assertThat( xmlReader.getEisType() ).isEqualTo( "EIS Type" );
+    public void readsEisType() throws Exception {
+        assertThat(xmlReader.getEisType()).isEqualTo("EIS Type");
     }
 
     @Test
-    public void readsVendorName() throws Exception
-    {
-        assertThat( xmlReader.getVendorName() ).isEqualTo( "Vendor Name" );
+    public void readsVendorName() throws Exception {
+        assertThat(xmlReader.getVendorName()).isEqualTo("Vendor Name");
     }
 
     @Test
-    public void readsResourceAdapterVersion() throws Exception
-    {
-        assertThat( xmlReader.getResourceAdapterVersion() ).isEqualTo( "Resource Adapter Version" );
+    public void readsResourceAdapterVersion() throws Exception {
+        assertThat(xmlReader.getResourceAdapterVersion()).isEqualTo("Resource Adapter Version");
     }
 
     @Test
-    public void readsSpecVersion() throws Exception
-    {
-        assertThat( xmlReader.getSpecVersion() ).isEqualTo( "1.5" );
+    public void readsSpecVersion() throws Exception {
+        assertThat(xmlReader.getSpecVersion()).isEqualTo("1.5");
     }
 
-    @Test( expected = CuckooException.class )
-    public void throwsCuckooExceptionWhenRaXmlFileCanNotBeFound() throws Exception
-    {
-        new RaXmlReader( "not_there" );
+    @Test(expected = CuckooException.class)
+    public void throwsCuckooExceptionWhenRaXmlFileCanNotBeFound() throws Exception {
+        new RaXmlReader("not_there");
     }
 
     @Test
-    public void throwsExceptionWhenElementInRaXmlFileIsMissing() throws Exception
-    {
-        RaXmlReader reader = new RaXmlReader( "/META-INF/ra_broken.xml" );
-        try
-        {
+    public void throwsExceptionWhenElementInRaXmlFileIsMissing() throws Exception {
+        RaXmlReader reader = new RaXmlReader("/META-INF/ra_broken.xml");
+        try {
             reader.getDescription();
-            fail( "Expected: Cuckoo Exception" );
-        }
-        catch ( CuckooException e )
-        {
+            fail("Expected: Cuckoo Exception");
+        } catch (CuckooException e) {
             // expected
         }
     }
 
     @Test
-    public void throwsExceptionWhenElementInRaXmlFileIsEmpty() throws Exception
-    {
-        TreeSet<String> set = new TreeSet<String>();
-        for ( String key : System.getProperties().stringPropertyNames() )
-        {
-            set.add( key + "=" + System.getProperty( key ) );
-        }
-
-        RaXmlReader reader = new RaXmlReader( "/META-INF/ra_broken.xml" );
-        try
-        {
+    public void throwsExceptionWhenElementInRaXmlFileIsEmpty() throws Exception {
+        RaXmlReader reader = new RaXmlReader("/META-INF/ra_broken.xml");
+        try {
             reader.getDisplayName();
-            fail( "Expected: Cuckoo Exception" );
-        }
-        catch ( CuckooException e )
-        {
+            fail("Expected: Cuckoo Exception");
+        } catch (CuckooException e) {
             // expected
         }
     }

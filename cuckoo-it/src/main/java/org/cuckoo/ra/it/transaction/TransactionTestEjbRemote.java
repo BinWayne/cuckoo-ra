@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -24,7 +24,7 @@ import javax.resource.ResourceException;
 import javax.resource.cci.MappedRecord;
 
 @Remote
-public interface TransactionTestEjbRemote
-{
-    MappedRecord callFunctionWithContainerManagedTransaction( MappedRecord input ) throws ResourceException;
+public interface TransactionTestEjbRemote {
+
+    MappedRecord callFunctionWithContainerManagedTransaction(MappedRecord input) throws ResourceException;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -24,17 +24,17 @@ package org.cuckoo.ra.spi;
  * or the configuration properties defined in the application server specific deployment descriptor.
  * These are set by the container on each managed connection factory instance.
  */
-public interface ConfigurationProperties
-{
+public interface ConfigurationProperties {
+
     void setDestinationName(String destinationName);
 
     void setJcoClient(String jcoClient);
 
-    void setUsername( String username );
+    void setUsername(String username);
 
     void setJcoAliasUser(String jcoAliasUser);
 
-    void setPassword( String password );
+    void setPassword(String password);
 
     void setJcoLanguage(String jcoLanguage);
 

@@ -6,187 +6,187 @@
            http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"
            version="1.5">
 
-    <description>Cuckoo Resource Adapter for SAP</description>
-    <display-name>Cuckoo Resource Adapter for SAP</display-name>
-    <vendor-name>akquinet tech@spree GmbH</vendor-name>
-    <eis-type>SAP ECC</eis-type>
-    <resourceadapter-version>${project.version}</resourceadapter-version>
-    <license>
-        <description>GNU Lesser General Public License 3</description>
-        <license-required>true</license-required>
-    </license>
+  <description>Cuckoo Resource Adapter for SAP</description>
+  <display-name>Cuckoo Resource Adapter for SAP</display-name>
+  <vendor-name>akquinet tech@spree GmbH</vendor-name>
+  <eis-type>SAP ECC</eis-type>
+  <resourceadapter-version>${project.version}</resourceadapter-version>
+  <license>
+    <description>GNU Lesser General Public License 3</description>
+    <license-required>true</license-required>
+  </license>
 
-    <resourceadapter>
-        <resourceadapter-class>org.cuckoo.ra.spi.CuckooResourceAdapter</resourceadapter-class>
+  <resourceadapter>
+    <resourceadapter-class>org.cuckoo.ra.spi.CuckooResourceAdapter</resourceadapter-class>
 
-        <outbound-resourceadapter>
-            <connection-definition>
-                <managedconnectionfactory-class>org.cuckoo.ra.spi.CuckooManagedConnectionFactory
-                </managedconnectionfactory-class>
-                <config-property>
-                    <!-- The name of the JCo destination -->
-                    <config-property-name>destinationName</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.client - SAP client -->
-                    <config-property-name>jcoClient</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value>100</config-property-value>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.user - Logon user -->
-                    <config-property-name>username</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.alias_user - Logon user alias -->
-                    <config-property-name>jcoAliasUser</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.passwd - Logon password -->
-                    <config-property-name>password</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.lang - Logon language -->
-                    <config-property-name>jcoLanguage</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value>EN</config-property-value>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.saprouter - SAP router string to use for a system protected by a firewall -->
-                    <config-property-name>jcoSapRouter</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.sysnr - SAP system number -->
-                    <config-property-name>jcoSystemNumber</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value>00</config-property-value>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.ashost - SAP application server -->
-                    <config-property-name>jcoApplicationServerHost</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.mshost - SAP message server -->
-                    <config-property-name>jcoMessageServerHost</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.msserv - optional: SAP message server port to use instead of the default sapms<sysid> -->
-                    <config-property-name>jcoMessageServerPort</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.r3name - System ID of the SAP system -->
-                    <config-property-name>jcoR3Name</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.client.group - Group of SAP application servers -->
-                    <config-property-name>jcoGroup</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.trace - Enable/disable RFC trace (0 or 1) -->
-                    <config-property-name>jcoTrace</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.cpic_trace - Enable/disable CPIC trace (-1 [take over environment value], 0 no trace, 1,2,3 different amount of trace) -->
-                    <config-property-name>jcoCpicTrace</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.use_sapgui - Start a SAP GUI and associate with the connection. (0 - do not start [default], 1 start GUI, 2 start GUI and hide if not used) -->
-                    <config-property-name>jcoUseSapgui</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.codepage - Initial codepage in SAP notation -->
-                    <config-property-name>jcoCodepage</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.snc_mode - Secure network connection (SNC) mode, 0 (off) or 1 (on) -->
-                    <config-property-name>jcoSncMode</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.snc_partnername - SNC partner, e.g. p:CN=R3, O=XYZ-INC, C=EN -->
-                    <config-property-name>jcoSncPartnername</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.snc_qop - SNC level of security, 1 to 9 -->
-                    <config-property-name>jcoSncQop</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.snc_myname - SNC name. Overrides default SNC partner -->
-                    <config-property-name>jcoSncMyName</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.client.snc_lib - Path to library which provides SNC service -->
-                    <config-property-name>jcoSncLibrary</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>
-                    <!-- jco.destination.repository_destination - Specifies which destination should be used as repository, i.e. use this destination's repository -->
-                    <config-property-name>jcoRepositoryDestination</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.destination.repository.user - Optional: If repository destination is not set, and this property is set, it will be used as user for repository calls. This allows using a different user for repository lookups -->
-                    <config-property-name>jcoRepositoryUser</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.destination.repository.passwd - The password for a repository user. Mandatory, if a repository user should be used. -->
-                    <config-property-name>jcoRepositoryPassword</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <config-property>     
-                    <!-- jco.destination.repository.snc_mode - Optional: If SNC is used for this destination, it is possible to turn it off for repository connections, if this property is set to 0. Defaults to the value of jco.client.snc_mode -->
-                    <config-property-name>jcoRepositorySncMode</config-property-name>
-                    <config-property-type>java.lang.String</config-property-type>
-                    <config-property-value/>
-                </config-property>
-                <connectionfactory-interface>javax.resource.cci.ConnectionFactory</connectionfactory-interface>
-                <connectionfactory-impl-class>org.cuckoo.ra.cci.CuckooConnectionFactoryImpl
-                </connectionfactory-impl-class>
-                <connection-interface>javax.resource.cci.Connection</connection-interface>
-                <connection-impl-class>org.cuckoo.ra.cci.CuckooConnection</connection-impl-class>
-            </connection-definition>
-            <transaction-support>LocalTransaction</transaction-support>
-            <reauthentication-support>false</reauthentication-support>
-        </outbound-resourceadapter>
-    </resourceadapter>
+    <outbound-resourceadapter>
+      <connection-definition>
+        <managedconnectionfactory-class>org.cuckoo.ra.spi.CuckooManagedConnectionFactory
+        </managedconnectionfactory-class>
+        <config-property>
+          <!-- The name of the JCo destination -->
+          <config-property-name>destinationName</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.client - SAP client -->
+          <config-property-name>jcoClient</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>100</config-property-value>
+        </config-property>
+        <config-property>
+          <!-- jco.client.user - Logon user -->
+          <config-property-name>username</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.alias_user - Logon user alias -->
+          <config-property-name>jcoAliasUser</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.passwd - Logon password -->
+          <config-property-name>password</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.lang - Logon language -->
+          <config-property-name>jcoLanguage</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>EN</config-property-value>
+        </config-property>
+        <config-property>
+          <!-- jco.client.saprouter - SAP router string to use for a system protected by a firewall -->
+          <config-property-name>jcoSapRouter</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.sysnr - SAP system number -->
+          <config-property-name>jcoSystemNumber</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>00</config-property-value>
+        </config-property>
+        <config-property>
+          <!-- jco.client.ashost - SAP application server -->
+          <config-property-name>jcoApplicationServerHost</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.mshost - SAP message server -->
+          <config-property-name>jcoMessageServerHost</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.msserv - optional: SAP message server port to use instead of the default sapms<sysid> -->
+          <config-property-name>jcoMessageServerPort</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.r3name - System ID of the SAP system -->
+          <config-property-name>jcoR3Name</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.group - Group of SAP application servers -->
+          <config-property-name>jcoGroup</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.trace - Enable/disable RFC trace (0 or 1) -->
+          <config-property-name>jcoTrace</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.cpic_trace - Enable/disable CPIC trace (-1 [take over environment value], 0 no trace, 1,2,3 different amount of trace) -->
+          <config-property-name>jcoCpicTrace</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.use_sapgui - Start a SAP GUI and associate with the connection. (0 - do not start [default], 1 start GUI, 2 start GUI and hide if not used) -->
+          <config-property-name>jcoUseSapgui</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.codepage - Initial codepage in SAP notation -->
+          <config-property-name>jcoCodepage</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.snc_mode - Secure network connection (SNC) mode, 0 (off) or 1 (on) -->
+          <config-property-name>jcoSncMode</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.snc_partnername - SNC partner, e.g. p:CN=R3, O=XYZ-INC, C=EN -->
+          <config-property-name>jcoSncPartnername</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.snc_qop - SNC level of security, 1 to 9 -->
+          <config-property-name>jcoSncQop</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.snc_myname - SNC name. Overrides default SNC partner -->
+          <config-property-name>jcoSncMyName</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.client.snc_lib - Path to library which provides SNC service -->
+          <config-property-name>jcoSncLibrary</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.destination.repository_destination - Specifies which destination should be used as repository, i.e. use this destination's repository -->
+          <config-property-name>jcoRepositoryDestination</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.destination.repository.user - Optional: If repository destination is not set, and this property is set, it will be used as user for repository calls. This allows using a different user for repository lookups -->
+          <config-property-name>jcoRepositoryUser</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.destination.repository.passwd - The password for a repository user. Mandatory, if a repository user should be used. -->
+          <config-property-name>jcoRepositoryPassword</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <config-property>
+          <!-- jco.destination.repository.snc_mode - Optional: If SNC is used for this destination, it is possible to turn it off for repository connections, if this property is set to 0. Defaults to the value of jco.client.snc_mode -->
+          <config-property-name>jcoRepositorySncMode</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value/>
+        </config-property>
+        <connectionfactory-interface>javax.resource.cci.ConnectionFactory</connectionfactory-interface>
+        <connectionfactory-impl-class>org.cuckoo.ra.cci.CuckooConnectionFactoryImpl
+        </connectionfactory-impl-class>
+        <connection-interface>javax.resource.cci.Connection</connection-interface>
+        <connection-impl-class>org.cuckoo.ra.cci.CuckooConnection</connection-impl-class>
+      </connection-definition>
+      <transaction-support>LocalTransaction</transaction-support>
+      <reauthentication-support>false</reauthentication-support>
+    </outbound-resourceadapter>
+  </resourceadapter>
 </connector>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -24,17 +24,17 @@ import javax.resource.ResourceException;
 import javax.resource.cci.MappedRecord;
 
 @Local
-public interface TransactionTestEjb
-{
-    MappedRecord callFunctionWithoutTransaction( MappedRecord input ) throws ResourceException;
+public interface TransactionTestEjb {
 
-    MappedRecord callFunctionWithLocalTransaction( MappedRecord input ) throws ResourceException;
+    MappedRecord callFunctionWithoutTransaction(MappedRecord input) throws ResourceException;
 
-    MappedRecord callFunctionWithContainerManagedTransaction( MappedRecord input ) throws ResourceException;
+    MappedRecord callFunctionWithLocalTransaction(MappedRecord input) throws ResourceException;
 
-    MappedRecord callFunctionWithContainerManagedTransactionAndThrowRuntimeException( MappedRecord record )
+    MappedRecord callFunctionWithContainerManagedTransaction(MappedRecord input) throws ResourceException;
+
+    MappedRecord callFunctionWithContainerManagedTransactionAndThrowRuntimeException(MappedRecord record)
             throws ResourceException;
 
-    MappedRecord callFunctionWithLocalTransactionAndThrowRuntimeException( MappedRecord record )
+    MappedRecord callFunctionWithLocalTransactionAndThrowRuntimeException(MappedRecord record)
             throws ResourceException;
 }

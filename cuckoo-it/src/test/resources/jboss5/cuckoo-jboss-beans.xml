@@ -2,18 +2,18 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-    <application-policy xmlns="urn:jboss:security-beans:1.0" name="ejb-test">
-        <authentication>
-            <login-module code="org.jboss.security.ClientLoginModule"
-                          flag="required">
-                <module-option name="restore-login-identity">true</module-option>
-            </login-module>
-            <login-module code="org.jboss.resource.security.CallerIdentityLoginModule" flag="required">
-                <module-option name="userName">defaultUserName</module-option>
-                <module-option name="password">defaultPassword</module-option>
-                <module-option name="managedConnectionFactoryName">jboss.jca:name=eis/sap/A12,service=TxCM</module-option>
-            </login-module>
-        </authentication>
-    </application-policy>
+  <application-policy xmlns="urn:jboss:security-beans:1.0" name="ejb-test">
+    <authentication>
+      <login-module code="org.jboss.security.ClientLoginModule"
+                    flag="required">
+        <module-option name="restore-login-identity">true</module-option>
+      </login-module>
+      <login-module code="org.jboss.resource.security.CallerIdentityLoginModule" flag="required">
+        <module-option name="userName">defaultUserName</module-option>
+        <module-option name="password">defaultPassword</module-option>
+        <module-option name="managedConnectionFactoryName">jboss.jca:name=eis/sap/A12,service=TxCM</module-option>
+      </login-module>
+    </authentication>
+  </application-policy>
 
 </deployment>

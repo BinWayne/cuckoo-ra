@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,50 +18,41 @@
  */
 package org.cuckoo.ra.it.util;
 
-import org.jboss.shrinkwrap.descriptor.api.Descriptor;
-import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Scanner;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
 
-public class DataSourceDescriptor implements Descriptor
-{
+public class DataSourceDescriptor implements Descriptor {
+
     private String destinationFileName;
     private String fileContents;
 
-    public DataSourceDescriptor( String resourceFileName, String destinationFileName )
-    {
+    public DataSourceDescriptor(String resourceFileName, String destinationFileName) {
         this.destinationFileName = destinationFileName;
-        fileContents = readFile( resourceFileName );
+        fileContents = readFile(resourceFileName);
     }
 
-    private String readFile( String resourceFileName )
-    {
-        InputStream inputStream = DataSourceDescriptor.class.getResourceAsStream( resourceFileName );
-        return new Scanner( inputStream, "UTF-8" ).useDelimiter( "\\A" ).next();
+    private String readFile(String resourceFileName) {
+        InputStream inputStream = DataSourceDescriptor.class.getResourceAsStream(resourceFileName);
+        return new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
     }
 
-    public String getDescriptorName()
-    {
+    public String getDescriptorName() {
         return destinationFileName;
     }
 
-    public String exportAsString() throws DescriptorExportException
-    {
+    public String exportAsString() throws DescriptorExportException {
         return fileContents;
     }
 
-    public void exportTo( OutputStream outputStream ) throws DescriptorExportException, IllegalArgumentException
-    {
-        try
-        {
-            outputStream.write( fileContents.getBytes() );
-        }
-        catch ( IOException e )
-        {
-            throw new DescriptorExportException( "Error writing file contents to OutputStream", e );
+    public void exportTo(OutputStream outputStream) throws DescriptorExportException, IllegalArgumentException {
+        try {
+            outputStream.write(fileContents.getBytes());
+        } catch (IOException e) {
+            throw new DescriptorExportException("Error writing file contents to OutputStream", e);
         }
     }
 }

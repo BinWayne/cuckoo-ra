@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -25,26 +25,24 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public final class CuckooTestUtil
-{
-    private CuckooTestUtil()
-    {
+public final class CuckooTestUtil {
+
+    private CuckooTestUtil() {
         // Helper class with static methods
     }
 
-    public static <T extends Serializable> T serializeAndReturnDeserializedObject( T object )
-            throws IOException, ClassNotFoundException
-    {
+    public static <T extends Serializable> T serializeAndReturnDeserializedObject(T object)
+            throws IOException, ClassNotFoundException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream( baos );
-        out.writeObject( object );
+        ObjectOutputStream out = new ObjectOutputStream(baos);
+        out.writeObject(object);
         out.close();
 
-        ByteArrayInputStream bain = new ByteArrayInputStream( baos.toByteArray() );
-        ObjectInputStream in = new ObjectInputStream( bain );
+        ByteArrayInputStream bain = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(bain);
 
-        @SuppressWarnings( {"unchecked"} )
-        T managerRead = ( T ) in.readObject();
+        @SuppressWarnings({"unchecked"})
+        T managerRead = (T) in.readObject();
 
         in.close();
         return managerRead;

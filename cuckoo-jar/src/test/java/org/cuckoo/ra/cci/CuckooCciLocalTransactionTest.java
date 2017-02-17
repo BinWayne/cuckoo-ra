@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -20,47 +20,43 @@ package org.cuckoo.ra.cci;
 
 import org.cuckoo.ra.spi.CuckooManagedConnection;
 import org.junit.Test;
-
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-public class CuckooCciLocalTransactionTest
-{
-    private CuckooManagedConnection managedConnection = createMock( CuckooManagedConnection.class );
+public class CuckooCciLocalTransactionTest {
 
-    private CuckooCciLocalTransaction cciTransaction = new CuckooCciLocalTransaction( managedConnection, null );
+    private CuckooManagedConnection managedConnection = createMock(CuckooManagedConnection.class);
+
+    private CuckooCciLocalTransaction cciTransaction = new CuckooCciLocalTransaction(managedConnection, null);
 
     @Test
-    public void transactionGetsStartedOnManagedConnectionWhenBeginIsCalled() throws Exception
-    {
-        managedConnection.beginLocalTransaction( null );
-        replay( managedConnection );
+    public void transactionGetsStartedOnManagedConnectionWhenBeginIsCalled() throws Exception {
+        managedConnection.beginLocalTransaction(null);
+        replay(managedConnection);
 
         cciTransaction.begin();
 
-        verify( managedConnection );
+        verify(managedConnection);
     }
 
     @Test
-    public void transactionGetsCommittedOnManagedConnectionWhenCommitIsCalled() throws Exception
-    {
-        managedConnection.commitLocalTransaction( null );
-        replay( managedConnection );
+    public void transactionGetsCommittedOnManagedConnectionWhenCommitIsCalled() throws Exception {
+        managedConnection.commitLocalTransaction(null);
+        replay(managedConnection);
 
         cciTransaction.commit();
 
-        verify( managedConnection );
+        verify(managedConnection);
     }
 
     @Test
-    public void transactionGetsRolledBackOnManagedConnectionWhenRollbackIsCalled() throws Exception
-    {
-        managedConnection.rollbackLocalTransaction( null );
-        replay( managedConnection );
+    public void transactionGetsRolledBackOnManagedConnectionWhenRollbackIsCalled() throws Exception {
+        managedConnection.rollbackLocalTransaction(null);
+        replay(managedConnection);
 
         cciTransaction.rollback();
 
-        verify( managedConnection );
+        verify(managedConnection);
     }
 }

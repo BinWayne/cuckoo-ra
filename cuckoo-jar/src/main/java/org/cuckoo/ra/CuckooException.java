@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 akquinet tech@spree GmbH
+ * Copyright (C) 2012-2017 akquinet tech@spree GmbH
  *
  * This file is part of the Cuckoo Resource Adapter for SAP.
  *
@@ -18,15 +18,13 @@
  */
 package org.cuckoo.ra;
 
-public class CuckooException extends RuntimeException
-{
-    public CuckooException( String message, Exception e )
-    {
-        super( message, e );
+public class CuckooException extends RuntimeException {
+
+    public CuckooException(String message, Exception e) {
+        super(message, e);
     }
 
-    public CuckooException( String message )
-    {
-        super( message );
+    public CuckooException(String message) {
+        super(message);
     }
 }

@@ -6,10 +6,10 @@
            http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"
            version="1.5">
 
-    <description>Description</description>
-    <display-name>Display Name</display-name>
-    <vendor-name>Vendor Name</vendor-name>
-    <eis-type>EIS Type</eis-type>
-    <resourceadapter-version>Resource Adapter Version</resourceadapter-version>
-    <resourceadapter/>
+  <description>Description</description>
+  <display-name>Display Name</display-name>
+  <vendor-name>Vendor Name</vendor-name>
+  <eis-type>EIS Type</eis-type>
+  <resourceadapter-version>Resource Adapter Version</resourceadapter-version>
+  <resourceadapter/>
 </connector>
