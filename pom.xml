@@ -22,10 +22,36 @@
   <licenses>
     <license>
       <name>GNU LESSER GENERAL PUBLIC LICENSE (LGPL) Version 3</name>
-      <url>http://www.gnu.org/licenses/lgpl.txt
-      </url>
+      <url>http://www.gnu.org/licenses/lgpl.txt</url>
     </license>
   </licenses>
+
+  <developers>
+    <developer>
+      <id>cerker</id>
+      <name>Carsten Erker</name>
+      <email>carsten.erker at akquinet dot de</email>
+      <organization>akquinet tech@spree GmbH</organization>
+      <organizationUrl>http://www.akquinet.de</organizationUrl>
+      <roles>
+        <role>project lead</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Christopher Hesse</name>
+      <url>https://sourceforge.net/u/cdhesse76</url>
+      <roles>
+        <role>contributor</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Lars Bilger</name>
+      <url>https://github.com/lbilger</url>
+      <roles>
+        <role>contributor</role>
+      </roles>
+    </developer>
+  </developers>
 
   <issueManagement>
     <system>Sourceforge</system>
@@ -33,9 +59,10 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:git://git.code.sf.net/p/cuckoo-ra/git</connection>
-    <developerConnection>scm:git:ssh://git.code.sf.net/p/cuckoo-ra/git</developerConnection>
-    <url>http://git.code.sf.net/p/cuckoo-ra/git</url>
+    <url>https://github.com/hibersap/cuckoo-ra</url>
+    <connection>scm:git:https://github.com/hibersap/cuckoo-ra.git</connection>
+    <developerConnection>scm:git:git@github.com:hibersap/cuckoo-ra.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
 
   <build>
@@ -72,22 +99,10 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+          <testSource>1.8</testSource>
+          <testTarget>1.8</testTarget>
           <encoding>UTF-8</encoding>
         </configuration>
-        <executions>
-          <execution>
-            <!-- overwrite to use Java 8 at least for tests -->
-            <id>default-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <source>1.5</source>
-              <target>1.5</target>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
