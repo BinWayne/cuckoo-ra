@@ -20,6 +20,8 @@ package org.cuckoo.ra.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -29,6 +31,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.cuckoo.ra.CuckooException;
 import org.w3c.dom.Document;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -48,7 +52,9 @@ public class RaXmlReader {
         InputStream inputStream = getInputStream(raXmlFile);
 
         try {
-            xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+            DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            documentBuilder.setEntityResolver(new EntityResolverDummy());
+            xmlDocument = documentBuilder.parse(inputStream);
             xPath = XPathFactory.newInstance().newXPath();
         } catch (SAXException e) {
             throw new CuckooException("Error reading ra.xml file", e);
@@ -104,6 +110,16 @@ public class RaXmlReader {
             return value;
         } catch (XPathExpressionException e) {
             throw new CuckooException("Error parsing ra.xml file, XPath expression: '" + xpath + "'", e);
+        }
+    }
+
+    private static class EntityResolverDummy implements EntityResolver {
+
+        /**
+         * Prevent validation to access external resources.
+         */
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            return new InputSource(new StringReader(""));
         }
     }
 }
